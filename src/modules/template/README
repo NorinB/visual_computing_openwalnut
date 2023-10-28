@@ -1,0 +1,53 @@
+This is your entry point into OpenWalnut module development!
+
+1. General:
+***********
+
+This directory contains a bunch of modules that demonstrate how to develop with/for
+OpenWalnut. Get started with WToolkit. This file contains definitions for all the modules
+that are required by OpenWalnut during load of your module.  Each module listed there can
+than be found in the corresponding C++ files. They are extensively documented and describe
+each step in detail. 
+
+You need help? Check out our extensive code documentation when something is unclear, check
+out http://www.openwalnut.org for more documentation or simply contact our developer
+mailing list openwalnut-dev@lists.informatik.uni-leipzig.de.
+
+Now, directly dive into the code. You will see, getting started with OpenWalnut module
+development is easy!
+
+2. Files and Topics:
+********************
+
+- WMTemplate.*
+  -> this is where to start. In this example module, you will learn everything about
+     developing modules. It shows how to work with data, parameters, and the general
+     paradigms in OpenWalnut.
+
+- WMTemplateContainers.*
+  -> this module demonstrates the possibilities of combining modules into your own
+     container modules. You will learn how to re-use other modules in your own complex
+     networks/modules.
+
+- WMTemplateUI.*
+  -> this demonstrates the use of OpenWalnut's abstract view and widget API. You will
+     learn how to write custom views the user can interact with. It also shows how to
+     combine these views into other widgets and demonstrates the use of property widgets.
+
+- WMTemplateShaders.*
+  -> this module demonstrates OpenWalnut's powerful shader API. You will learn how to
+     expand your OSG-based geometry with GLSL shaders and, even more importantly, how to
+     interact with these shaders using your WProperties.
+
+- WMTemplateColormapping.*
+  -> this rather simple example demonstrates the colormapping API of OpenWalnut. You will
+     learn how to color arbitrary geometry using the WGEColormapping mechanism.
+
+- WMTemplateRenderPipelines.*
+  -> this demonstrates the use of OpenWalnut's offscreen processing API. You will learn
+     how to implement complex render pipelines and how to transfer data (textures) 
+     between each steps.
+
+- WMTemplaeDataLoader.*
+ -> this demonstrates the correct implementation of WDataModule modules. They can be used
+    to load data from files, servers or databases.

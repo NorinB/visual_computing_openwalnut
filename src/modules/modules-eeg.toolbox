@@ -1,0 +1,2 @@
+ADD_MODULE( eegView )
+ADD_MODULE( readDipoles )

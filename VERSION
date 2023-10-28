@@ -1,0 +1,27 @@
+# OW Version File. This file specifies the version. The line VERSION=X.Y.Z is
+# used and parsed. This file has to be here every time. The VERSION needs to be
+# set properly or CMake will fail.
+#
+# SYNTAX: * The version string always is 1.2.3
+#         * With an optional postfix of "+git1234".
+#           This is useful if building is done by scripts. If you want to automatically
+#           add the correct Git revision, use only +gitX without number.
+#         * You can add beta or release candidate flags by appending b123 or rc123 directly
+#           after the version number.
+#
+# IMPORTANT: If you modify the file, cmake re-creates the version header. But
+#            it is not able to set all library version. Please re-run cmake if
+#            you change something here.
+#
+# Examples:
+#   VERSION=1.2.0
+#   VERSION=1.2.0+gitX  -> replaces the X with the current revision number
+#   VERSION=1.2.0+git1234 -> here, revision number was set by the build scripts for example.
+#   VERSION=1.2.0b1+gitX -> first beta version
+#   VERSION=1.2.0rc1+gitX -> first release candidate version
+#   VERSION=1.2.0sometext1+gitX -> even arbitrary texts are allowd. Be careful as many packaging
+#                                 systems refuse to accept these arbitrary version strings.
+#   VERSION=1.2.0 (gitBranch) -> Adds the current branch
+
+# The current version string:
+VERSION=1.5.0dev+gitX (gitBranch)

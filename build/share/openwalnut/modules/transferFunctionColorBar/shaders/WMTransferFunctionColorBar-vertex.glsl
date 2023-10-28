@@ -1,0 +1,1 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/transferFunctionColorBar/shaders/WMTransferFunctionColorBar-vertex.glsl

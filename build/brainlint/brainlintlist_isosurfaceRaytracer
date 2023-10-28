@@ -1,0 +1,4 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/isosurfaceRaytracer/WMIsosurfaceRaytracer.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/isosurfaceRaytracer/WMIsosurfaceRaytracer.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/isosurfaceRaytracer/shaders/WMIsosurfaceRaytracer-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/isosurfaceRaytracer/shaders/WMIsosurfaceRaytracer-vertex.glsl

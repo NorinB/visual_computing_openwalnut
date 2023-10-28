@@ -1,0 +1,2 @@
+#!/bin/bash
+ declare BRAINLINTFILES=$(cat /home/noah/Developer/visual_computing_openwalnut/build/brainlint/brainlintlist_directVolumeRendering2TF); for B_FILE in $BRAINLINTFILES; do B_FILE=$(echo $B_FILE | tr -d ''); /home/noah/Developer/visual_computing_openwalnut/src/../tools/style/brainlint/brainlint.py --color $B_FILE;done 2>&1 | grep -iv 'Total errors found: 0$' | cat

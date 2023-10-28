@@ -1,0 +1,4 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/surfaceParameterAnimator/WMSurfaceParameterAnimator.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/surfaceParameterAnimator/WMSurfaceParameterAnimator.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/surfaceParameterAnimator/shaders/WMSurfaceParameterAnimator-Beams-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/surfaceParameterAnimator/shaders/WMSurfaceParameterAnimator-Beams-vertex.glsl

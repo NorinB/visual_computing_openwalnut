@@ -1,0 +1,4 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/directVolumeRendering/WMDirectVolumeRendering.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/directVolumeRendering/WMDirectVolumeRendering.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/directVolumeRendering/shaders/WMDirectVolumeRendering-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/directVolumeRendering/shaders/WMDirectVolumeRendering-vertex.glsl

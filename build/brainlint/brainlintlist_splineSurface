@@ -1,0 +1,10 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WBSpline.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WBSplineSurface.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WMSplineSurface.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WSurface.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WBSpline.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WBSplineSurface.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WMSplineSurface.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/WSurface.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/shaders/WMSplineSurface-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/splineSurface/shaders/WMSplineSurface-vertex.glsl

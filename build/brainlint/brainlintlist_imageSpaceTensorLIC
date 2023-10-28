@@ -1,0 +1,15 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/WMImageSpaceTensorLIC.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/WToolkit.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/WTuringTextureCreator.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/WMImageSpaceTensorLIC.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/WTuringTextureCreator.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Advection-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Advection-vertex.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-ClipBlend-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-ClipBlend-vertex.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Edge-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Edge-vertex.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Postprocessing-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Postprocessing-vertex.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Transformation-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/imageSpaceTensorLIC/shaders/WMImageSpaceTensorLIC-Transformation-vertex.glsl

@@ -1,0 +1,4 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/triangleMeshRenderer/WMTriangleMeshRenderer.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/triangleMeshRenderer/WMTriangleMeshRenderer.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/triangleMeshRenderer/shaders/WMTriangleMeshRenderer-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/triangleMeshRenderer/shaders/WMTriangleMeshRenderer-vertex.glsl

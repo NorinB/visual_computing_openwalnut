@@ -1,0 +1,5 @@
+/home/noah/Developer/visual_computing_openwalnut/src/modules/pointRenderer/WMPointRenderer.cpp
+/home/noah/Developer/visual_computing_openwalnut/src/modules/pointRenderer/WMPointRenderer.h
+/home/noah/Developer/visual_computing_openwalnut/src/modules/pointRenderer/shaders/WMPointRenderer-fragment.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/pointRenderer/shaders/WMPointRenderer-geometry.glsl
+/home/noah/Developer/visual_computing_openwalnut/src/modules/pointRenderer/shaders/WMPointRenderer-vertex.glsl

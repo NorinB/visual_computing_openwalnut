@@ -1,7 +1,0 @@
-/home/noah/Developer/visual_computing_openwalnut/src/modules/fiberDisplay/WMFiberDisplay.cpp
-/home/noah/Developer/visual_computing_openwalnut/src/modules/fiberDisplay/WMFiberDisplay.h
-/home/noah/Developer/visual_computing_openwalnut/src/modules/fiberDisplay/shaders/WMFiberDisplay-EndCap-fragment.glsl
-/home/noah/Developer/visual_computing_openwalnut/src/modules/fiberDisplay/shaders/WMFiberDisplay-EndCap-geometry.glsl
-/home/noah/Developer/visual_computing_openwalnut/src/modules/fiberDisplay/shaders/WMFiberDisplay-EndCap-vertex.glsl
-/home/noah/Developer/visual_computing_openwalnut/src/modules/fiberDisplay/shaders/WMFiberDisplay-fragment.glsl
-/home/noah/Developer/visual_computing_openwalnut/src/modules/fiberDisplay/shaders/WMFiberDisplay-vertex.glsl

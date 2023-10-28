@@ -1,1 +1,0 @@
-/home/noah/Developer/visual_computing_openwalnut/src/modules/triangleMeshRenderer/shaders/WMTriangleMeshRenderer-fragment.glsl

@@ -79,7 +79,7 @@ void WMThresholdingExample::properties()
     // ---> Put the code for your properties here. See "src/modules/template/" for an extensively documented example.
     // m_propCondition = std::shared_ptr<WCondition>(new WCondition());
 
-    threshold = m_properties->addProperty("Threshold", "Threshold, which needs to be crossed to be counted towards the internal counter.", 1.0, m_propCondition);
+    threshold = m_properties->addProperty("Threshold", "Threshold, which needs to be crossed to be counted towards the internal counter.", 60.0, m_propCondition);
 
     WModule::properties();
 }

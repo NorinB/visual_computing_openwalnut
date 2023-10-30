@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include <osg/Geometry>
+#include <osg/ShapeDrawable>
 
 #include "core/dataHandler/WDataSetScalar.h"
 #include "core/graphicsEngine/WGEGeodeUtils.h"
@@ -108,6 +109,7 @@ void WMThresholdingExample::moduleMain()
         infoLog() << "Waiting ...";
         m_moduleState.wait();
 
+
         // woke up since the module is requested to finish?
         if (m_shutdownFlag())
         {
@@ -124,6 +126,7 @@ void WMThresholdingExample::moduleMain()
 
         // ---> Insert code doing the real stuff here
 
+        // Assignment 4.2
         currentDataSet = scalarData;
         counter = 0;
         for (size_t i = 0; i < scalarData->getValueSet()->rawSize(); i++)
@@ -135,6 +138,21 @@ void WMThresholdingExample::moduleMain()
             }
         }
         std::cout << " Count of points above the threshold: " << counter << "\n";
+
+        // Assignment 4.3
+        osg::ref_ptr< osg::Geode > geode = new osg::Geode();
+        std::shared_ptr<WGridRegular3D> grid = std::dynamic_pointer_cast<WGridRegular3D>(scalarData->getGrid());
+        for (int i = 0; i < grid->size(); i++) {
+            if (scalarData->getValueSet()->getScalarDouble(i) > threshold->get(true)) {
+                WVector3d position = grid->getPosition(i);
+                geode->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3(position.x(), position.y(), position.z()), 0.25)));
+            }
+        }
+
+            m_rootNode->remove( m_geode );
+            m_geode = geode;
+            // And insert the new node
+            m_rootNode->insert( m_geode );       
     }
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove(m_rootNode);

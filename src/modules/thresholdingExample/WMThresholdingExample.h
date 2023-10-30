@@ -129,6 +129,11 @@ private:
      * Current Scalar
     */
     std::shared_ptr< WDataSetScalar > currentDataSet;
+
+    /**
+     * The geometry rendered by this module.
+     */
+    osg::ref_ptr< osg::Geode > m_geode;
 };
 
 #endif  // WMTHRESHOLDINGEXAMPLE_H

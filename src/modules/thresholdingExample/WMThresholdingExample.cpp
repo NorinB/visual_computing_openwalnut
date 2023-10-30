@@ -156,6 +156,7 @@ void WMThresholdingExample::moduleMain()
 
         m_rootNode->remove(m_geode);
         m_geode = geode;
+        m_shader->apply(m_geode);
         // And insert the new node
         m_rootNode->insert(m_geode);
     }

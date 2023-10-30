@@ -1,6 +1,7 @@
 {
   "files.associations": {
-    "referenced": "cpp"
+    "referenced": "cpp",
+    "shapedrawable": "cpp"
   },
   "cmake.sourceDirectory": "/home/noah/Developer/visual_computing_openwalnut/src"
 }

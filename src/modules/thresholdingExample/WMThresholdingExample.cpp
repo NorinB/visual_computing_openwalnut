@@ -103,14 +103,13 @@ void WMThresholdingExample::moduleMain()
     m_rootNode = osg::ref_ptr<WGEManagedGroupNode>(new WGEManagedGroupNode(m_active));
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert(m_rootNode);
     m_shader = new WGEShader("WGELighting", m_localPath);
-    m_shader->setDefine( "USE_MATERIAL_DIFFUSE" );
+    m_shader->setDefine("USE_MATERIAL_DIFFUSE");
 
     // main loop
     while (!m_shutdownFlag())
     {
         infoLog() << "Waiting ...";
         m_moduleState.wait();
-
 
         // woke up since the module is requested to finish?
         if (m_shutdownFlag())
@@ -142,19 +141,23 @@ void WMThresholdingExample::moduleMain()
         std::cout << " Count of points above the threshold: " << counter << "\n";
 
         // Assignment 4.3
-        osg::ref_ptr< osg::Geode > geode = new osg::Geode();
+        osg::ref_ptr<osg::Geode> geode = new osg::Geode();
         std::shared_ptr<WGridRegular3D> grid = std::dynamic_pointer_cast<WGridRegular3D>(scalarData->getGrid());
-        for (int i = 0; i < grid->size(); i++) {
-            if (scalarData->getValueSet()->getScalarDouble(i) > threshold->get(true)) {
+        for (int i = 0; i < grid->size(); i++)
+        {
+            if (scalarData->getValueSet()->getScalarDouble(i) > threshold->get(true))
+            {
                 WVector3d position = grid->getPosition(i);
-                geode->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3(position.x(), position.y(), position.z()), 0.25)));
+                osg::ref_ptr<osg::ShapeDrawable> shape = new osg::ShapeDrawable(new osg::Box(osg::Vec3(position.x(), position.y(), position.z()), 0.25));
+                shape->setColor(defaultColor::DARKGREEN);
+                geode->addDrawable(shape);
             }
         }
 
-        m_rootNode->remove( m_geode );
+        m_rootNode->remove(m_geode);
         m_geode = geode;
         // And insert the new node
-        m_rootNode->insert( m_geode );       
+        m_rootNode->insert(m_geode);
     }
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove(m_rootNode);

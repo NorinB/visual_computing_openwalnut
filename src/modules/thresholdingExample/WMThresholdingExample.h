@@ -28,6 +28,7 @@
 #include <string>
 
 #include "core/kernel/WModule.h"
+#include "core/graphicsEngine/shaders/WGEShader.h"
 
 // forward declarations to reduce compile dependencies
 template< class T > class WModuleInputData;
@@ -134,6 +135,11 @@ private:
      * The geometry rendered by this module.
      */
     osg::ref_ptr< osg::Geode > m_geode;
+
+    /**
+     * We want some nice shading effects, so we need a nice shader.
+     */
+    WGEShader::RefPtr m_shader;
 };
 
 #endif  // WMTHRESHOLDINGEXAMPLE_H

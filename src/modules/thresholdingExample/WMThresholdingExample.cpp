@@ -102,6 +102,8 @@ void WMThresholdingExample::moduleMain()
     // graphics setup
     m_rootNode = osg::ref_ptr<WGEManagedGroupNode>(new WGEManagedGroupNode(m_active));
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->insert(m_rootNode);
+    m_shader = new WGEShader("WGELighting", m_localPath);
+    m_shader->setDefine( "USE_MATERIAL_DIFFUSE" );
 
     // main loop
     while (!m_shutdownFlag())
@@ -149,10 +151,10 @@ void WMThresholdingExample::moduleMain()
             }
         }
 
-            m_rootNode->remove( m_geode );
-            m_geode = geode;
-            // And insert the new node
-            m_rootNode->insert( m_geode );       
+        m_rootNode->remove( m_geode );
+        m_geode = geode;
+        // And insert the new node
+        m_rootNode->insert( m_geode );       
     }
 
     WKernel::getRunningKernel()->getGraphicsEngine()->getScene()->remove(m_rootNode);

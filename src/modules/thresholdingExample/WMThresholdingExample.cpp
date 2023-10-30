@@ -148,7 +148,7 @@ void WMThresholdingExample::moduleMain()
             if (scalarData->getValueSet()->getScalarDouble(i) > threshold->get(true))
             {
                 WVector3d position = grid->getPosition(i);
-                osg::ref_ptr<osg::ShapeDrawable> shape = new osg::ShapeDrawable(new osg::Box(osg::Vec3(position.x(), position.y(), position.z()), 0.25));
+                osg::ref_ptr<osg::ShapeDrawable> shape = new osg::ShapeDrawable(new osg::Box(osg::Vec3(position.x(), position.y(), position.z()), 1));
                 shape->setColor(defaultColor::DARKGREEN);
                 geode->addDrawable(shape);
             }

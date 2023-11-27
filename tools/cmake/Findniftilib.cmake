@@ -11,8 +11,7 @@ FIND_PATH( NIFTILIB_INCLUDE_DIR nifti1.h
         $ENV{NIFTILIB_INCLUDE_DIR}
         $ENV{HOME}/.local/include/nifti
         /usr/include/nifti
-        /usr/local/include/nifti 
-        /home/noah/Developer/visual_computing_openwalnut/nifticlib-2.0.0/niftilib )
+        /usr/local/include/nifti )
 
 # This hack is inspired by FindBoost.cmake. It ensures that only shared objects are found. Linking a SO with a static lib is not possible 
 # in Linux. On other systems, this should be no problem.
@@ -20,8 +19,8 @@ SET( _ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
 IF( CMAKE_HOST_SYSTEM MATCHES "Linux" )
     SET( CMAKE_FIND_LIBRARY_SUFFIXES .so )
 ENDIF()
-FIND_LIBRARY( NIFTILIB_LIBRARY NAMES niftiio HINTS $ENV{NIFTILIB_LIBRARY_DIR}/niftilib $ENV{NIFTILIB_LIBRARY_DIR} /usr/lib /usr/local/lib /home/noah/Developer/visual_computing_openwalnut/nifticlib-2.0.0/niftilib )
-FIND_LIBRARY( NIFTIZNZ_LIBRARY NAMES znz HINTS $ENV{NIFTILIB_LIBRARY_DIR}/znzlib $ENV{NIFTILIB_LIBRARY_DIR} /usr/lib /usr/local/lib /home/noah/Developer/visual_computing_openwalnut/nifticlib-2.0.0/znzlib )
+FIND_LIBRARY( NIFTILIB_LIBRARY NAMES niftiio HINTS $ENV{NIFTILIB_LIBRARY_DIR}/niftilib $ENV{NIFTILIB_LIBRARY_DIR} /usr/lib /usr/local/lib )
+FIND_LIBRARY( NIFTIZNZ_LIBRARY NAMES znz HINTS $ENV{NIFTILIB_LIBRARY_DIR}/znzlib $ENV{NIFTILIB_LIBRARY_DIR} /usr/lib /usr/local/lib )
 FIND_LIBRARY( ZLIB_LIBRARY NAMES z zlib HINTS $ENV{ZLIB_LIBRARY_DIR} /usr/lib /usr/local/lib )
 
 SET( CMAKE_FIND_LIBRARY_SUFFIXES ${_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES} )

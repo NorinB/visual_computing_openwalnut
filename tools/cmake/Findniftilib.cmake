@@ -11,7 +11,8 @@ FIND_PATH( NIFTILIB_INCLUDE_DIR nifti1.h
         $ENV{NIFTILIB_INCLUDE_DIR}
         $ENV{HOME}/.local/include/nifti
         /usr/include/nifti
-        /usr/local/include/nifti )
+        /usr/local/include/nifti 
+        /home/noah/Developer/visual_computing_openwalnut/nifticlib-2.0.0/niftilib )
 
 # This hack is inspired by FindBoost.cmake. It ensures that only shared objects are found. Linking a SO with a static lib is not possible 
 # in Linux. On other systems, this should be no problem.

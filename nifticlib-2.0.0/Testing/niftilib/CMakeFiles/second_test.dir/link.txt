@@ -1,0 +1,1 @@
+/usr/bin/cc -rdynamic CMakeFiles/second_test.dir/nifti_test2.o -o second_test   -L/home/noah/Developer/visual_computing_openwalnut/nifticlib-2.0.0/niftilib  -L/home/noah/Developer/visual_computing_openwalnut/nifticlib-2.0.0/znzlib  ../../niftilib/libniftiio.a ../../znzlib/libznz.a -lz -lm 

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libnifticdf.a CMakeFiles/nifticdf.dir/nifticdf.o
+/usr/bin/ranlib libnifticdf.a

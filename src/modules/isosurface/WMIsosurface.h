@@ -127,6 +127,8 @@ private:
 
     std::shared_mutex m_updateLock; //!< Lock to prevent concurrent threads trying to update the osg node
 
+    WPropBool m_useAcceleratedMarchingCubes;
+
     WPropInt m_nbTriangles; //!< Info-property showing the number of triangles in the mesh.
     WPropInt m_nbVertices; //!< Info-property showing the number of vertices in the mesh.
 

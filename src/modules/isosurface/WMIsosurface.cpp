@@ -44,6 +44,7 @@
 #include "core/common/WLimits.h"
 #include "core/common/WPathHelper.h"
 #include "core/common/WProgress.h"
+#include "core/common/algorithms/WAcceleratedMarchingCubesAlgorithm.h"
 #include "core/common/algorithms/WMarchingCubesAlgorithm.h"
 #include "core/common/algorithms/WMarchingLegoAlgorithm.h"
 #include "core/common/math/WLinearAlgebraFunctions.h"
@@ -249,6 +250,8 @@ void WMIsosurface::properties()
 
     m_useMarchingLego = m_properties->addProperty( "Voxel surface", "Not interpolated surface", false, m_recompute );
 
+    m_useAcceleratedMarchingCubes = m_properties->addProperty( "Use accelerated Marching Cubes", "Toggle the use of accelerated marching cubes", false);
+
     WModule::properties();
 }
 
@@ -324,7 +327,7 @@ namespace
      * \param enum_type the OpenWalnut type enum of the data on which the isosurface should be computed.
       */
     template<typename AlgoBase>
-    std::shared_ptr<MCAlgoMapperBase<AlgoBase> > createAlgo( int enum_type )
+    std::shared_ptr<MCAlgoMapperBase<AlgoBase>> createAlgo( int enum_type )
     {
 #define CASE( enum_type ) \
         case enum_type:\
@@ -358,6 +361,7 @@ void WMIsosurface::generateSurfacePre( double isoValue )
     debugLog() << "Isovalue: " << isoValue;
     WAssert( ( *m_dataSet ).getValueSet()->order() == 0, "This module only works on scalars." );
 
+    WAcceleratedMarchingCubesAlgorithm amcAlgo;
     WMarchingCubesAlgorithm mcAlgo;
     WMarchingLegoAlgorithm mlAlgo;
     std::shared_ptr< WGridRegular3D > gridRegular3D = std::dynamic_pointer_cast< WGridRegular3D >( ( *m_dataSet ).getGrid() );
@@ -373,7 +377,11 @@ void WMIsosurface::generateSurfacePre( double isoValue )
     }
     else
     {
-        algo = createAlgo<WMarchingCubesAlgorithm>( valueSet->getDataType() );
+        if (m_useAcceleratedMarchingCubes->get(true)) {
+            algo = createAlgo<WAcceleratedMarchingCubesAlgorithm>(valueSet->getDataType());
+        } else {
+            algo = createAlgo<WMarchingCubesAlgorithm>( valueSet->getDataType() );
+        }
     }
 
     if( algo )

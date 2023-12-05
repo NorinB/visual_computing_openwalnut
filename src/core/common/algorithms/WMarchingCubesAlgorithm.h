@@ -34,6 +34,8 @@
 #include "WMarchingCubesCaseTables.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
 
+typedef std::map< unsigned int, WPointXYZId > ID2WPointXYZId;
+
 /**
  * A point consisting of its coordinates and ID
  */
@@ -44,8 +46,6 @@ struct WPointXYZId
     double y; //!< y coordinates of the point.
     double z; //!< z coordinates of the point.
 };
-
-typedef std::map< unsigned int, WPointXYZId > ID2WPointXYZId;
 
 /**
  * Encapsulated ids representing a triangle.

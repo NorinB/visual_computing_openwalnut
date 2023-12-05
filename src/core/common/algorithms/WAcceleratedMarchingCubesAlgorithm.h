@@ -34,18 +34,18 @@
 #include "WMarchingCubesCaseTables.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
 
+typedef std::map< unsigned int, WAcceleratedPointXYZId > ID2WAcceleratedPointXYZId;
+
 /**
  * A point consisting of its coordinates and ID
  */
-struct WPointXYZId
+struct WAcceleratedPointXYZId
 {
     unsigned int newID; //!< ID of the point
     double x; //!< x coordinates of the point.
     double y; //!< y coordinates of the point.
     double z; //!< z coordinates of the point.
 };
-
-typedef std::map< unsigned int, WPointXYZId > ID2WPointXYZId;
 
 /**
  * Encapsulated ids representing a triangle.
@@ -132,7 +132,7 @@ private:
      *
      * \return intersection point id
      */
-    template< typename T > WPointXYZId calculateIntersection( const std::vector< T >* vals,
+    template< typename T > WAcceleratedPointXYZId calculateIntersection( const std::vector< T >* vals,
                                                               unsigned int nX, unsigned int nY, unsigned int nZ, unsigned int nEdgeNo );
 
     /**
@@ -150,7 +150,7 @@ private:
      *
      * \return interpolated point
      */
-    WPointXYZId interpolate( double fX1, double fY1, double fZ1, double fX2, double fY2, double fZ2, double tVal1, double tVal2 );
+    WAcceleratedPointXYZId interpolate( double fX1, double fY1, double fZ1, double fX2, double fY2, double fZ2, double tVal1, double tVal2 );
 
     /**
      * Returns the edge ID.
@@ -182,7 +182,7 @@ private:
 
     WMatrix< double > m_matrix; //!< The 4x4 transformation matrix for the triangle vertices.
 
-    ID2WPointXYZId m_idToVertices;  //!< List of WPointXYZIds which form the isosurface.
+    ID2WAcceleratedPointXYZId m_idToVertices;  //!< List of WAcceleratedPointXYZIds which form the isosurface.
     WMCTriangleVECTOR m_trivecTriangles;  //!< List of WMCTriangleS which form the triangulation of the isosurface.
 };
 
@@ -248,88 +248,88 @@ template<typename T> std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlg
                 {
                     if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 8 )
                     {
-                        WPointXYZId pt = calculateIntersection( vals, x, y, z, 3 );
+                        WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 3 );
                         unsigned int id = getEdgeID( x, y, z, 3 );
-                        m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                        m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                     }
                     if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 1 )
                     {
-                        WPointXYZId pt = calculateIntersection( vals, x, y, z, 0 );
+                        WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 0 );
                         unsigned int id = getEdgeID( x, y, z, 0 );
-                        m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                        m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                     }
                     if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 256 )
                     {
-                        WPointXYZId pt = calculateIntersection( vals, x, y, z, 8 );
+                        WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 8 );
                         unsigned int id = getEdgeID( x, y, z, 8 );
-                        m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                        m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                     }
 
                     if( x == m_nCellsX - 1 )
                     {
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 4 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 2 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 2 );
                             unsigned int id = getEdgeID( x, y, z, 2 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 2048 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 11 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 11 );
                             unsigned int id = getEdgeID( x, y, z, 11 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                     }
                     if( y == m_nCellsY - 1 )
                     {
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 2 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 1 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 1 );
                             unsigned int id = getEdgeID( x, y, z, 1 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 512 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 9 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 9 );
                             unsigned int id = getEdgeID( x, y, z, 9 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                     }
                     if( z == m_nCellsZ - 1 )
                     {
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 16 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 4 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 4 );
                             unsigned int id = getEdgeID( x, y, z, 4 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 128 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 7 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 7 );
                             unsigned int id = getEdgeID( x, y, z, 7 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                     }
                     if( ( x == m_nCellsX - 1 ) && ( y == m_nCellsY - 1 ) )
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 1024 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 10 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 10 );
                             unsigned int id = getEdgeID( x, y, z, 10 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                     if( ( x == m_nCellsX - 1 ) && ( z == m_nCellsZ - 1 ) )
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 64 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 6 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 6 );
                             unsigned int id = getEdgeID( x, y, z, 6 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
                     if( ( y == m_nCellsY - 1 ) && ( z == m_nCellsZ - 1 ) )
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 32 )
                         {
-                            WPointXYZId pt = calculateIntersection( vals, x, y, z, 5 );
+                            WAcceleratedPointXYZId pt = calculateIntersection( vals, x, y, z, 5 );
                             unsigned int id = getEdgeID( x, y, z, 5 );
-                            m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
+                            m_idToVertices.insert( ID2WAcceleratedPointXYZId::value_type( id, pt ) );
                         }
 
                     for( int i = 0; wMarchingCubesCaseTables::triTable[tableIndex][i] != -1; i += 3 )
@@ -353,7 +353,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlg
     std::shared_ptr< WTriangleMesh > triMesh( new WTriangleMesh( m_idToVertices.size(), m_trivecTriangles.size() ) );
 
     // Rename vertices.
-    ID2WPointXYZId::iterator mapIterator = m_idToVertices.begin();
+    ID2WAcceleratedPointXYZId::iterator mapIterator = m_idToVertices.begin();
     while( mapIterator != m_idToVertices.end() )
     {
         WPosition texCoord = WPosition( mapIterator->second.x / nbCoordsX,
@@ -393,7 +393,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlg
     return triMesh;
 }
 
-template< typename T > WPointXYZId WAcceleratedMarchingCubesAlgorithm::calculateIntersection( const std::vector< T >* vals,
+template< typename T > WAcceleratedPointXYZId WAcceleratedMarchingCubesAlgorithm::calculateIntersection( const std::vector< T >* vals,
                                                                                    unsigned int nX, unsigned int nY, unsigned int nZ,
                                                                                    unsigned int nEdgeNo )
 {
@@ -488,9 +488,9 @@ template< typename T > WPointXYZId WAcceleratedMarchingCubesAlgorithm::calculate
     double val1 = ( *vals )[ v1z * nPointsInSlice + v1y * ( m_nCellsX + 1 ) + v1x ];
     double val2 = ( *vals )[ v2z * nPointsInSlice + v2y * ( m_nCellsX + 1 ) + v2x ];
 
-    WPointXYZId intersection = interpolate( x1, y1, z1, x2, y2, z2, val1, val2 );
+    WAcceleratedPointXYZId intersection = interpolate( x1, y1, z1, x2, y2, z2, val1, val2 );
     intersection.newID = 0;
     return intersection;
 }
 
-#endif  // WMARCHINGCUBESALGORITHM_H
+#endif  // WACCELERATEDMARCHINGCUBESALGORITHM_H

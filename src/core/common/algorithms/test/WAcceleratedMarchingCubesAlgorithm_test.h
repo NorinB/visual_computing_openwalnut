@@ -44,13 +44,13 @@ public:
         WAcceleratedMarchingCubesAlgorithm mc;
         mc.m_tIsoLevel = 1.7;  // mu = 0.5454...
 
-        WPointXYZId expected;
+        WAcceleratedPointXYZId expected;
         expected.newID = 0;
         expected.x = 1.3545454545454545;
         expected.y = 2.4545454545454545;
         expected.z = 5.4090909090909091;
 
-        WPointXYZId result = mc.interpolate( 1.3, 2.4, 3.5,
+        WAcceleratedPointXYZId result = mc.interpolate( 1.3, 2.4, 3.5,
                                              1.4, 2.5, 7.0,
                                              1.1, 2.2 );
 
@@ -136,14 +136,14 @@ public:
         data.push_back( 6 );
         data.push_back( 7 );
 
-        WPointXYZId expected;
+        WAcceleratedPointXYZId expected;
         expected.newID = 0;
         expected.x = 1;
         expected.y = 0.35;
         expected.z = 0;
 
         // This is the edge between grid pos 3 and 1 which are cell verts 2 and 3
-        WPointXYZId result = mc.calculateIntersection( &data, 0, 0, 0, 2 );
+        WAcceleratedPointXYZId result = mc.calculateIntersection( &data, 0, 0, 0, 2 );
 
         double delta = 1e-9;
         TS_ASSERT_DELTA( expected.x, result.x, delta );
@@ -174,14 +174,14 @@ public:
         data.push_back( 6 );
         data.push_back( 7 );
 
-        WPointXYZId expected;
+        WAcceleratedPointXYZId expected;
         expected.newID = 0;
         expected.x = 1;
         expected.y = 0.35;
         expected.z = 0;
 
         // This is the edge between grid pos 3 and 1 which are cell verts 2 and 3
-        WPointXYZId result = mc.calculateIntersection( &data, 0, 0, 0, 2 );
+        WAcceleratedPointXYZId result = mc.calculateIntersection( &data, 0, 0, 0, 2 );
 
         double delta = 1e-9;
         TS_ASSERT_DELTA( expected.x, result.x, delta );

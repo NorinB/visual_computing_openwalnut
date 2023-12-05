@@ -31,10 +31,10 @@ WAcceleratedMarchingCubesAlgorithm::WAcceleratedMarchingCubesAlgorithm()
 {
 }
 
-WPointXYZId WAcceleratedMarchingCubesAlgorithm::interpolate( double fX1, double fY1, double fZ1, double fX2, double fY2, double fZ2,
+WAcceleratedPointXYZId WAcceleratedMarchingCubesAlgorithm::interpolate( double fX1, double fY1, double fZ1, double fX2, double fY2, double fZ2,
                                              double tVal1, double tVal2 )
 {
-    WPointXYZId interpolation;
+    WAcceleratedPointXYZId interpolation;
     double mu;
 
     mu = static_cast<double>( ( m_tIsoLevel - tVal1 ) ) / ( tVal2 - tVal1 );

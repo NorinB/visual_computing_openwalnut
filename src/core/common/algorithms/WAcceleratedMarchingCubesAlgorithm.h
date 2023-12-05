@@ -50,12 +50,12 @@ typedef std::map< unsigned int, WAcceleratedPointXYZId > ID2WAcceleratedPointXYZ
 /**
  * Encapsulated ids representing a triangle.
  */
-struct WMCTriangle
+struct WAcceleratedMCTriangle
 {
     unsigned int pointID[3]; //!< The IDs of the vertices of the triangle.
 };
 
-typedef std::vector<WMCTriangle> WMCTriangleVECTOR;
+typedef std::vector<WAcceleratedMCTriangle> WAcceleratedMCTriangleVECTOR;
 
 // -------------------------------------------------------
 //
@@ -183,7 +183,7 @@ private:
     WMatrix< double > m_matrix; //!< The 4x4 transformation matrix for the triangle vertices.
 
     ID2WAcceleratedPointXYZId m_idToVertices;  //!< List of WAcceleratedPointXYZIds which form the isosurface.
-    WMCTriangleVECTOR m_trivecTriangles;  //!< List of WMCTriangleS which form the triangulation of the isosurface.
+    WAcceleratedMCTriangleVECTOR m_trivecTriangles;  //!< List of WAcceleratedMCTriangleS which form the triangulation of the isosurface.
 };
 
 
@@ -334,7 +334,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlg
 
                     for( int i = 0; wMarchingCubesCaseTables::triTable[tableIndex][i] != -1; i += 3 )
                     {
-                        WMCTriangle triangle;
+                        WAcceleratedMCTriangle triangle;
                         unsigned int pointID0, pointID1, pointID2;
                         pointID0 = getEdgeID( x, y, z, wMarchingCubesCaseTables::triTable[tableIndex][i] );
                         pointID1 = getEdgeID( x, y, z, wMarchingCubesCaseTables::triTable[tableIndex][i + 1] );
@@ -377,7 +377,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlg
     }
 
     // Now rename triangles.
-    WMCTriangleVECTOR::iterator vecIterator = m_trivecTriangles.begin();
+    WAcceleratedMCTriangleVECTOR::iterator vecIterator = m_trivecTriangles.begin();
     while( vecIterator != m_trivecTriangles.end() )
     {
         for( unsigned int i = 0; i < 3; i++ )

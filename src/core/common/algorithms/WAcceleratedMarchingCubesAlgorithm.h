@@ -732,6 +732,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
 
     if (points1.size() > 0)
     {
+        std::cout << "points1.size() = " << points1.size() << std::endl;
         if (isInside(points1, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points1, isoValue, &vals);
@@ -740,6 +741,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     if (points2.size() > 0)
     {
+        std::cout << "points2.size() = " << points2.size() << std::endl;
         if (isInside(points2, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points2, isoValue, &vals);
@@ -748,6 +750,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     if (points3.size() > 0)
     {
+        std::cout << "points3.size() = " << points3.size() << std::endl;
         if (isInside(points3, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points3, isoValue, &vals);
@@ -756,6 +759,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     if (points4.size() > 0)
     {
+        std::cout << "points4.size() = " << points4.size() << std::endl;
         if (isInside(points4, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points4, isoValue, &vals);
@@ -764,6 +768,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     if (points5.size() > 0)
     {
+        std::cout << "points5.size() = " << points5.size() << std::endl;
         if (isInside(points5, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points5, isoValue, &vals);
@@ -772,6 +777,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     if (points6.size() > 0)
     {
+        std::cout << "points6.size() = " << points6.size() << std::endl;
         if (isInside(points6, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points6, isoValue, &vals);
@@ -780,6 +786,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     if (points7.size() > 0)
     {
+        std::cout << "points7.size() = " << points7.size() << std::endl;
         if (isInside(points7, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points7, isoValue, &vals);
@@ -788,6 +795,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     if (points8.size() > 0)
     {
+        std::cout << "points8.size() = " << points8.size() << std::endl;
         if (isInside(points8, isoValue, vals))
         {
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points8, isoValue, &vals);

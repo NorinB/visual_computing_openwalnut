@@ -825,6 +825,8 @@ bool WAcceleratedMarchingCubesAlgorithm::isInside(const std::vector<WAccelerated
         }
     }
 
+    std::cout << "lowestValue = " << lowestValue << std::endl;
+    std::cout << "highestValue = " << highestValue << std::endl;
     return lowestValue <= isoValue && highestValue >= isoValue;
 }
 

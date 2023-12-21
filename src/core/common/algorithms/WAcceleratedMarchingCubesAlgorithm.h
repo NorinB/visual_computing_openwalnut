@@ -112,11 +112,11 @@ public:
      * \return the genereated surface
      */
     template <typename T>
-    std::shared_ptr<WTriangleMesh> generateSurface(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-                                                   const WMatrix<double> &mat,
-                                                   const std::vector<T> *vals,
-                                                   double isoValue,
-                                                   std::shared_ptr<WProgressCombiner> mainProgress);
+    std::shared_ptr<WTriangleMesh> generateSurfaceOriginal(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+                                                           const WMatrix<double> &mat,
+                                                           const std::vector<T> *vals,
+                                                           double isoValue,
+                                                           std::shared_ptr<WProgressCombiner> mainProgress);
 
     /**
      * Generate the triangles for the surface on the given dataSet (inGrid, vals). The texture coordinates in the resulting mesh are relative to
@@ -134,11 +134,11 @@ public:
      * \return the genereated surface
      */
     template <typename T>
-    std::shared_ptr<WTriangleMesh> generateSurfaceAccelerated(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-                                                              const WMatrix<double> &mat,
-                                                              const std::vector<T> *vals,
-                                                              double isoValue,
-                                                              std::shared_ptr<WProgressCombiner> mainProgress);
+    std::shared_ptr<WTriangleMesh> generateSurface(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+                                                   const WMatrix<double> &mat,
+                                                   const std::vector<T> *vals,
+                                                   double isoValue,
+                                                   std::shared_ptr<WProgressCombiner> mainProgress);
 
 protected:
 private:
@@ -197,6 +197,22 @@ private:
      */
     unsigned int getVertexID(unsigned int nX, unsigned int nY, unsigned int nZ);
 
+    /**
+     * Calculates the octree for the given points and iso value. Calls itself recusively until it gets to the smallest possible octree.
+     * \param points the points to calculate the octree for
+     * \param isoValue the iso value to calculate the octree for
+     */
+    template <typename T>
+    std::vector<WAcceleratedPointXYZId> calculateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals);
+
+    /**
+     * Calculates, whether the given points include the given iso value.
+     * \param points the points to check
+     * \param isoValue the iso value to check
+     */
+    template <typename T>
+    bool isInside(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals);
+
     unsigned int m_nCellsX; //!< No. of cells in x direction.
     unsigned int m_nCellsY; //!< No. of cells in y direction.
     unsigned int m_nCellsZ; //!< No. of cells in z direction.
@@ -210,11 +226,11 @@ private:
 };
 
 template <typename T>
-std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurface(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-                                                                                   const WMatrix<double> &mat,
-                                                                                   const std::vector<T> *vals,
-                                                                                   double isoValue,
-                                                                                   std::shared_ptr<WProgressCombiner> mainProgress)
+std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfaceOriginal(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+                                                                                           const WMatrix<double> &mat,
+                                                                                           const std::vector<T> *vals,
+                                                                                           double isoValue,
+                                                                                           std::shared_ptr<WProgressCombiner> mainProgress)
 {
     WAssert(vals, "No value set provided.");
 
@@ -416,11 +432,11 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
 }
 
 template <typename T>
-std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfaceAccelerated(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-                                                                                              const WMatrix<double> &mat,
-                                                                                              const std::vector<T> *vals,
-                                                                                              double isoValue,
-                                                                                              std::shared_ptr<WProgressCombiner> mainProgress)
+std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurface(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+                                                                                   const WMatrix<double> &mat,
+                                                                                   const std::vector<T> *vals,
+                                                                                   double isoValue,
+                                                                                   std::shared_ptr<WProgressCombiner> mainProgress)
 {
     WAssert(vals, "No value set provided.");
 
@@ -464,13 +480,9 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
 
     // TODO Hier den points Vektor mit Octrees bearbeiten
 
-
-
-
-
-
-
-    
+    std::cout << "points.size() am Anfang = " << points.size() << std::endl;
+    points = calculateOctree(points, isoValue, &vals);
+    std::cout << "points.size() nach Oktree-Berechnung = " << points.size() << std::endl;
 
     // Generate isosurface.
     for (const auto &point : points)
@@ -643,6 +655,169 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
 
     progress->finish();
     return triMesh;
+}
+
+template <typename T>
+std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals)
+{
+    std::vector<WAcceleratedPointXYZId> result;
+    if (points.size() == 1)
+    {
+        result.push_back(points[0]);
+        return result;
+    }
+
+    std::vector<WAcceleratedPointXYZId> points1;
+    std::vector<WAcceleratedPointXYZId> points2;
+    std::vector<WAcceleratedPointXYZId> points3;
+    std::vector<WAcceleratedPointXYZId> points4;
+    std::vector<WAcceleratedPointXYZId> points5;
+    std::vector<WAcceleratedPointXYZId> points6;
+    std::vector<WAcceleratedPointXYZId> points7;
+    std::vector<WAcceleratedPointXYZId> points8;
+
+    for (const auto &point : points)
+    {
+        if (point.x < m_nCellsX / 2)
+        {
+            if (point.y < m_nCellsY / 2)
+            {
+                if (point.z < m_nCellsZ / 2)
+                {
+                    points1.push_back(point);
+                }
+                else
+                {
+                    points2.push_back(point);
+                }
+            }
+            else
+            {
+                if (point.z < m_nCellsZ / 2)
+                {
+                    points3.push_back(point);
+                }
+                else
+                {
+                    points4.push_back(point);
+                }
+            }
+        }
+        else
+        {
+            if (point.y < m_nCellsY / 2)
+            {
+                if (point.z < m_nCellsZ / 2)
+                {
+                    points5.push_back(point);
+                }
+                else
+                {
+                    points6.push_back(point);
+                }
+            }
+            else
+            {
+                if (point.z < m_nCellsZ / 2)
+                {
+                    points7.push_back(point);
+                }
+                else
+                {
+                    points8.push_back(point);
+                }
+            }
+        }
+    }
+
+    if (points1.size() > 0)
+    {
+        if (isInside(points1, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points1, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    if (points2.size() > 0)
+    {
+        if (isInside(points2, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points2, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    if (points3.size() > 0)
+    {
+        if (isInside(points3, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points3, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    if (points4.size() > 0)
+    {
+        if (isInside(points4, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points4, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    if (points5.size() > 0)
+    {
+        if (isInside(points5, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points5, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    if (points6.size() > 0)
+    {
+        if (isInside(points6, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points6, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    if (points7.size() > 0)
+    {
+        if (isInside(points7, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points7, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    if (points8.size() > 0)
+    {
+        if (isInside(points8, isoValue, vals))
+        {
+            std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points8, isoValue, &vals);
+            result.insert(result.end(), octreeResult.begin(), octreeResult.end());
+        }
+    }
+    return result;
+}
+
+template <typename T>
+bool WAcceleratedMarchingCubesAlgorithm::isInside(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals)
+{
+    T firstValue = (*vals)[points[0].z * (m_nCellsX + 1) * (m_nCellsY + 1) + points[0].y * (m_nCellsX + 1) + points[0].x];
+    T lowestValue = firstValue;
+    T highestValue = firstValue;
+
+    for (const auto &point : points)
+    {
+        T currentVal = (*vals)[point.z * (m_nCellsX + 1) * (m_nCellsY + 1) + point.y * (m_nCellsX) + point.x];
+        if (currentVal < lowestValue)
+        {
+            lowestValue = currentVal;
+        }
+        else if (currentVal > highestValue)
+        {
+            highestValue = currentVal;
+        }
+    }
+
+    return lowestValue <= isoValue && highestValue >= isoValue;
 }
 
 template <typename T>

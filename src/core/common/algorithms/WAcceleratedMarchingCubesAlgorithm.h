@@ -199,6 +199,12 @@ private:
     unsigned int getVertexID(unsigned int nX, unsigned int nY, unsigned int nZ);
 
     /**
+     * Calculates the tow halfs of the given coordinates span and returns the two halfs as a vector.
+     * \param coordinatesSpan the coordinates span to divide
+     */
+    std::vector<std::vector<unsigned int>> getDividedCoordinatesSpan(const std::vector<unsigned int> coordinatesSpan);
+
+    /**
      * Calculates the octree for the given points and iso value. Calls itself recusively until it gets to the smallest possible octree.
      * \param points the points to calculate the octree for
      * \param isoValue the iso value to calculate the octree for
@@ -281,17 +287,27 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
         index++;
     }
 
-    // TODO Hier den points Vektor mit Octrees bearbeiten
-
     std::cout << "points.size() am Anfang = " << points.size() << std::endl;
-    std::vector<unsigned int> xCoordinatesSpan(m_nCellsX);
-    std::iota(xCoordinatesSpan.begin(), xCoordinatesSpan.end(), 0);
-    std::vector<unsigned int> yCoordinatesSpan(m_nCellsY);
-    std::iota(yCoordinatesSpan.begin(), yCoordinatesSpan.end(), 0);
-    std::vector<unsigned int> zCoordinatesSpan(m_nCellsZ);
-    std::iota(zCoordinatesSpan.begin(), zCoordinatesSpan.end(), 0);
+    std::vector<unsigned int> xCoordinatesSpan = {0, m_nCellsX};
+    std::vector<unsigned int> yCoordinatesSpan = {0, m_nCellsY};
+    std::vector<unsigned int> zCoordinatesSpan = {0, m_nCellsZ};
+    // std::vector<unsigned int> xCoordinatesSpan(m_nCellsX + 1);
+    // std::iota(xCoordinatesSpan.begin(), xCoordinatesSpan.end(), 0);
+    // std::vector<unsigned int> yCoordinatesSpan(m_nCellsY + 1);
+    // std::iota(yCoordinatesSpan.begin(), yCoordinatesSpan.end(), 0);
+    // std::vector<unsigned int> zCoordinatesSpan(m_nCellsZ + 1);
+    // std::iota(zCoordinatesSpan.begin(), zCoordinatesSpan.end(), 0);
+    // std::cout << "x coordinates: " << m_nCellsX << std::endl;
+    // std::cout << "xCoordinatesSpan.size() = " << xCoordinatesSpan.size() << std::endl;
+    // std::cout << "xCoordinatesSpan = " << xCoordinatesSpan[0] << " - " << xCoordinatesSpan[xCoordinatesSpan.size() - 1] << std::endl;
+    // std::cout << "y coordinates: " << m_nCellsY << std::endl;
+    // std::cout << "yCoordinatesSpan.size() = " << yCoordinatesSpan.size() << std::endl;
+    // std::cout << "yCoordinatesSpan = " << yCoordinatesSpan[0] << " - " << yCoordinatesSpan[yCoordinatesSpan.size() - 1] << std::endl;
+    // std::cout << "z coordinates: " << m_nCellsZ << std::endl;
+    // std::cout << "zCoordinatesSpan.size() = " << zCoordinatesSpan.size() << std::endl;
+    // std::cout << "zCoordinatesSpan = " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[zCoordinatesSpan.size() - 1] << std::endl;
     points = calculateOctree(points, isoValue, vals, xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
-    std::cout << "points.size() nach Oktree-Berechnung = " << points.size() << std::endl;
+    std::cout << "points.size() nach Octree-Berechnung = " << points.size() << std::endl;
 
     // Generate isosurface.
     for (const auto &point : points)
@@ -479,6 +495,11 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     {
         return result;
     }
+    if (xCoordinatesSpan.front() - xCoordinatesSpan.back() == 0 && yCoordinatesSpan.front() - yCoordinatesSpan.back() == 0 && zCoordinatesSpan.front() - zCoordinatesSpan.back() == 0)
+    {
+        result.insert(result.end(), points.begin(), points.end());
+        return result;
+    }
 
     std::vector<WAcceleratedPointXYZId> points1;
     std::vector<WAcceleratedPointXYZId> points2;
@@ -491,11 +512,11 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
 
     for (const auto &point : points)
     {
-        if (point.x < xCoordinatesSpan.size() / 2)
+        if (point.x < xCoordinatesSpan.back() / 2)
         {
-            if (point.y < yCoordinatesSpan.size() / 2)
+            if (point.y < yCoordinatesSpan.back() / 2)
             {
-                if (point.z < zCoordinatesSpan.size() / 2)
+                if (point.z < zCoordinatesSpan.back() / 2)
                 {
                     points1.push_back(point);
                 }
@@ -506,7 +527,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
             }
             else
             {
-                if (point.z < zCoordinatesSpan.size() / 2)
+                if (point.z < zCoordinatesSpan.back() / 2)
                 {
                     points3.push_back(point);
                 }
@@ -518,9 +539,9 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
         }
         else
         {
-            if (point.y < yCoordinatesSpan.size() / 2)
+            if (point.y < yCoordinatesSpan.back() / 2)
             {
-                if (point.z < zCoordinatesSpan.size() / 2)
+                if (point.z < zCoordinatesSpan.back() / 2)
                 {
                     points5.push_back(point);
                 }
@@ -531,7 +552,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
             }
             else
             {
-                if (point.z < zCoordinatesSpan.size() / 2)
+                if (point.z < zCoordinatesSpan.back() / 2)
                 {
                     points7.push_back(point);
                 }
@@ -543,87 +564,162 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
         }
     }
 
-    int midX = xCoordinatesSpan.size() / 2;
-    int midY = yCoordinatesSpan.size() / 2;
-    int midZ = zCoordinatesSpan.size() / 2;
-    std::vector<unsigned int> xCoordinatesSpanFirstHalf(xCoordinatesSpan.begin(), xCoordinatesSpan.begin() + midX);
-    std::vector<unsigned int> yCoordinatesSpanFirstHalf(yCoordinatesSpan.begin(), yCoordinatesSpan.begin() + midY);
-    std::vector<unsigned int> zCoordinatesSpanFirstHalf(zCoordinatesSpan.begin(), zCoordinatesSpan.begin() + midZ);
-    std::vector<unsigned int> xCoordinatesSpanSecondHalf(xCoordinatesSpan.begin() + midX, xCoordinatesSpan.end());
-    std::vector<unsigned int> yCoordinatesSpanSecondHalf(yCoordinatesSpan.begin() + midY, yCoordinatesSpan.end());
-    std::vector<unsigned int> zCoordinatesSpanSecondHalf(zCoordinatesSpan.begin() + midZ, zCoordinatesSpan.end());
+    std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
+    std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
+    std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
+    std::vector<std::vector<unsigned int>> dividedYCoordinatesSpan = getDividedCoordinatesSpan(yCoordinatesSpan);
+    std::vector<unsigned int> yCoordinatesSpanFirstHalf = {dividedYCoordinatesSpan.front().front(), dividedYCoordinatesSpan.front().back()};
+    std::vector<unsigned int> yCoordinatesSpanSecondHalf = {dividedYCoordinatesSpan.back().front(), dividedYCoordinatesSpan.back().back()};
+    std::vector<std::vector<unsigned int>> dividedZCoordinatesSpan = getDividedCoordinatesSpan(zCoordinatesSpan);
+    std::vector<unsigned int> zCoordinatesSpanFirstHalf = {dividedZCoordinatesSpan.front().front(), dividedZCoordinatesSpan.front().back()};
+    std::vector<unsigned int> zCoordinatesSpanSecondHalf = {dividedZCoordinatesSpan.back().front(), dividedZCoordinatesSpan.back().back()};
+    // int midX = xCoordinatesSpan.size() / 2;
+    // int midY = yCoordinatesSpan.size() / 2;
+    // int midZ = zCoordinatesSpan.size() / 2;
+    // std::vector<unsigned int> xCoordinatesSpanFirstHalf(xCoordinatesSpan.begin(), xCoordinatesSpan.begin() + midX);
+    // std::vector<unsigned int> yCoordinatesSpanFirstHalf(yCoordinatesSpan.begin(), yCoordinatesSpan.begin() + midY);
+    // std::vector<unsigned int> zCoordinatesSpanFirstHalf(zCoordinatesSpan.begin(), zCoordinatesSpan.begin() + midZ);
+    // std::vector<unsigned int> xCoordinatesSpanSecondHalf(xCoordinatesSpan.begin() + midX, xCoordinatesSpan.end());
+    // std::vector<unsigned int> yCoordinatesSpanSecondHalf(yCoordinatesSpan.begin() + midY, yCoordinatesSpan.end());
+    // std::vector<unsigned int> zCoordinatesSpanSecondHalf(zCoordinatesSpan.begin() + midZ, zCoordinatesSpan.end());
+    std::cout << "points1.size() = " << points1.size() << std::endl;
+    std::cout << "points2.size() = " << points2.size() << std::endl;
+    std::cout << "points3.size() = " << points3.size() << std::endl;
+    std::cout << "points4.size() = " << points4.size() << std::endl;
+    std::cout << "points5.size() = " << points5.size() << std::endl;
+    std::cout << "points6.size() = " << points6.size() << std::endl;
+    std::cout << "points7.size() = " << points7.size() << std::endl;
+    std::cout << "points8.size() = " << points8.size() << std::endl;
+    // std::cout << "gesamt berechnet: " << points1.size() + points2.size() + points3.size() + points4.size() + points5.size() + points6.size() + points7.size() + points8.size() << std::endl;
+    // std::cout << "xCoordinates: " << xCoordinatesSpan[0] << " - " << xCoordinatesSpan[1] << std::endl;
+    // std::cout << "yCoordinates: " << yCoordinatesSpan[0] << " - " << yCoordinatesSpan[1] << std::endl;
+    // std::cout << "zCoordinates: " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[1] << std::endl;
+    // std::cout << "xCoordinatesSpanFirstHalf = " << xCoordinatesSpanFirstHalf[0] << " - " << xCoordinatesSpanFirstHalf[1] << std::endl;
+    // std::cout << "xCoordinatesSpanSecondHalf = " << xCoordinatesSpanSecondHalf[0] << " - " << xCoordinatesSpanSecondHalf[1] << std::endl;
+    // std::cout << "yCoordinatesSpanFirstHalf = " << yCoordinatesSpanFirstHalf[0] << " - " << yCoordinatesSpanFirstHalf[1] << std::endl;
+    // std::cout << "yCoordinatesSpanSecondHalf = " << yCoordinatesSpanSecondHalf[0] << " - " << yCoordinatesSpanSecondHalf[1] << std::endl;
+    // std::cout << "zCoordinatesSpanFirstHalf = " << zCoordinatesSpanFirstHalf[0] << " - " << zCoordinatesSpanFirstHalf[1] << std::endl;
+    // std::cout << "zCoordinatesSpanSecondHalf = " << zCoordinatesSpanSecondHalf[0] << " - " << zCoordinatesSpanSecondHalf[1] << std::endl;
 
     if (points1.size() > 0)
     {
-        std::cout << "points1.size() = " << points1.size() << std::endl;
-        if (isInside(points1, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf))
+        // std::cout << "points1.size() = " << points1.size() << std::endl;
+        bool inside = isInside(points1, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf);
+        if (inside)
         {
+            // std::cout << "points1 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points1, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points1 sind nicht inside" << std::endl;
+        // }
     }
     if (points2.size() > 0)
     {
-        std::cout << "points2.size() = " << points2.size() << std::endl;
-        if (isInside(points2, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf))
+        // std::cout << "points2.size() = " << points2.size() << std::endl;
+        bool inside = isInside(points2, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf);
+        if (inside)
         {
+            // std::cout << "points2 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points2, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points2 sind nicht inside" << std::endl;
+        // }
     }
     if (points3.size() > 0)
     {
-        std::cout << "points3.size() = " << points3.size() << std::endl;
-        if (isInside(points3, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanFirstHalf))
+        // std::cout << "points3.size() = " << points3.size() << std::endl;
+        bool inside = isInside(points3, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanFirstHalf);
+        if (inside)
         {
+            // std::cout << "points3 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points3, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanFirstHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points3 sind nicht inside" << std::endl;
+        // }
     }
     if (points4.size() > 0)
     {
-        std::cout << "points4.size() = " << points4.size() << std::endl;
-        if (isInside(points4, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf))
+        // std::cout << "points4.size() = " << points4.size() << std::endl;
+        bool inside = isInside(points4, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf);
+        if (inside)
         {
+            // std::cout << "points4 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points4, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points4 sind nicht inside" << std::endl;
+        // }
     }
     if (points5.size() > 0)
     {
-        std::cout << "points5.size() = " << points5.size() << std::endl;
-        if (isInside(points5, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf))
+        // std::cout << "points5.size() = " << points5.size() << std::endl;
+        bool inside = isInside(points5, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf);
+        if (inside)
         {
+            // std::cout << "points5 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points5, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points5 sind nicht inside" << std::endl;
+        // }
     }
     if (points6.size() > 0)
     {
-        std::cout << "points6.size() = " << points6.size() << std::endl;
-        if (isInside(points6, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf))
+        // std::cout << "points6.size() = " << points6.size() << std::endl;
+        bool inside = isInside(points6, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf);
+        if (inside)
         {
+            // std::cout << "points6 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points6, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points6 sind nicht inside" << std::endl;
+        // }
     }
     if (points7.size() > 0)
     {
-        std::cout << "points7.size() = " << points7.size() << std::endl;
-        if (isInside(points7, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, xCoordinatesSpanFirstHalf))
+        // std::cout << "points7.size() = " << points7.size() << std::endl;
+        bool inside = isInside(points7, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanFirstHalf);
+        if (inside)
         {
+            // std::cout << "points7 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points7, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanFirstHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points7 sind nicht inside" << std::endl;
+        // }
     }
     if (points8.size() > 0)
     {
-        std::cout << "points8.size() = " << points8.size() << std::endl;
-        if (isInside(points8, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf))
+        // std::cout << "points8.size() = " << points8.size() << std::endl;
+        bool inside = isInside(points8, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf);
+        if (inside)
         {
+            // std::cout << "points8 sind inside" << std::endl;
             std::vector<WAcceleratedPointXYZId> octreeResult = calculateOctree(points8, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf);
             result.insert(result.end(), octreeResult.begin(), octreeResult.end());
         }
+        // else
+        // {
+        //     std::cout << "points8 sind nicht inside" << std::endl;
+        // }
     }
     return result;
 }
@@ -637,9 +733,13 @@ bool WAcceleratedMarchingCubesAlgorithm::isInside(const std::vector<WAccelerated
     }
     else if (points.size() == 1)
     {
-        return (*vals)[points[0].z * (xCoordinatesSpan.back() + 1) * (yCoordinatesSpan.back() + 1) + points[0].y * (xCoordinatesSpan.back() + 1) + points[0].x] == isoValue;
+        return true;
     }
-    else if (xCoordinatesSpan.size() == 1 || yCoordinatesSpan.size() == 0 || zCoordinatesSpan.size() == 0)
+    else if (xCoordinatesSpan.size() == 1 && yCoordinatesSpan.size() == 1 && zCoordinatesSpan.size() == 1)
+    {
+        return true;
+    }
+    else if (xCoordinatesSpan.size() == 0 || yCoordinatesSpan.size() == 0 || zCoordinatesSpan.size() == 0)
     {
         return false;
     }
@@ -661,8 +761,6 @@ bool WAcceleratedMarchingCubesAlgorithm::isInside(const std::vector<WAccelerated
         }
     }
 
-    std::cout << "lowestValue = " << lowestValue << std::endl;
-    std::cout << "highestValue = " << highestValue << std::endl;
     return lowestValue <= isoValue && highestValue >= isoValue;
 }
 

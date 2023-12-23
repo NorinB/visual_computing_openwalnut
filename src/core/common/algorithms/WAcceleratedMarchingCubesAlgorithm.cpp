@@ -106,3 +106,34 @@ std::vector<std::vector<unsigned int>> WAcceleratedMarchingCubesAlgorithm::getDi
     result.push_back(secondHalf);
     return result;
 }
+
+unsigned int WAcceleratedMarchingCubesAlgorithm::getMiddleOfCoordinatesSpan(const std::vector<unsigned int> coordinatesSpan)
+{
+    if (coordinatesSpan[0] - coordinatesSpan[1] == 1)
+    {
+        return coordinatesSpan.back();
+    }
+    else if (coordinatesSpan[0] - coordinatesSpan[1] == 0)
+    {
+        return coordinatesSpan.front();
+    }
+    return coordinatesSpan.front() + ((coordinatesSpan.back() - coordinatesSpan.front()) / 2) + ((coordinatesSpan.back() - coordinatesSpan.front()) % 2);
+}
+
+std::vector<std::vector<unsigned int>> WAcceleratedMarchingCubesAlgorithm::calculateCoordinatesSpansFromPoints(const std::vector<WAcceleratedPointXYZId> &points)
+{
+    std::vector<std::vector<unsigned int>> result;
+    std::vector<WAcceleratedPointXYZId> sortedPoints = points;
+    std::sort(sortedPoints.begin(), sortedPoints.end(), [](const WAcceleratedPointXYZId &a, const WAcceleratedPointXYZId &b)
+              { return a.x < b.x; });
+    result.push_back({sortedPoints.front().x, sortedPoints.back().x});
+std:
+    .sort(sortedPoints.begin(), sortedPoints.end(), [](const WAcceleratedPointXYZId &a, const WAcceleratedPointXYZId &b)
+          { return a.y < b.y; });
+    result.push_back({sortedPoints.front().y, sortedPoints.back().y});
+std:
+    .sort(sortedPoints.begin(), sortedPoints.end(), [](const WAcceleratedPointXYZId &a, const WAcceleratedPointXYZId &b)
+          { return a.z < b.z; });
+    result.push_back({sortedPoints.front().z, sortedPoints.back().z});
+    return result;
+}

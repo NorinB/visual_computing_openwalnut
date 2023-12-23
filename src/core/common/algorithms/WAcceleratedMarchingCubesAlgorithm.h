@@ -205,6 +205,18 @@ private:
     std::vector<std::vector<unsigned int>> getDividedCoordinatesSpan(const std::vector<unsigned int> coordinatesSpan);
 
     /**
+     * Calculates the middle of the given coordinates span.
+     * \param coordinatesSpan the coordinates span to calculate the middle of
+     */
+    unsigned int getMiddleOfCoordinatesSpan(const std::vector<unsigned int> coordinatesSpan);
+
+    /**
+     * Calculates the coordinates spans from the given points. One vector for x, y and z coordinates each.
+     * \param points the points to calculate the coordinates spans from
+     */
+    std::vector<std::vector<unsigned int>> calculateCoordinatesSpansFromPoints(const std::vector<WAcceleratedPointXYZId> &points);
+
+    /**
      * Calculates the octree for the given points and iso value. Calls itself recusively until it gets to the smallest possible octree.
      * \param points the points to calculate the octree for
      * \param isoValue the iso value to calculate the octree for
@@ -495,11 +507,6 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     {
         return result;
     }
-    if (xCoordinatesSpan.front() - xCoordinatesSpan.back() == 0 && yCoordinatesSpan.front() - yCoordinatesSpan.back() == 0 && zCoordinatesSpan.front() - zCoordinatesSpan.back() == 0)
-    {
-        result.insert(result.end(), points.begin(), points.end());
-        return result;
-    }
 
     std::vector<WAcceleratedPointXYZId> points1;
     std::vector<WAcceleratedPointXYZId> points2;
@@ -512,11 +519,11 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
 
     for (const auto &point : points)
     {
-        if (point.x < xCoordinatesSpan.back() / 2)
+        if (point.x < getMiddleOfCoordinatesSpan(xCoordinatesSpan))
         {
-            if (point.y < yCoordinatesSpan.back() / 2)
+            if (point.y < getMiddleOfCoordinatesSpan(yCoordinatesSpan))
             {
-                if (point.z < zCoordinatesSpan.back() / 2)
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
                 {
                     points1.push_back(point);
                 }
@@ -527,7 +534,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
             }
             else
             {
-                if (point.z < zCoordinatesSpan.back() / 2)
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
                 {
                     points3.push_back(point);
                 }
@@ -539,9 +546,9 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
         }
         else
         {
-            if (point.y < yCoordinatesSpan.back() / 2)
+            if (point.y < getMiddleOfCoordinatesSpan(yCoordinatesSpan))
             {
-                if (point.z < zCoordinatesSpan.back() / 2)
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
                 {
                     points5.push_back(point);
                 }
@@ -552,7 +559,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
             }
             else
             {
-                if (point.z < zCoordinatesSpan.back() / 2)
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
                 {
                     points7.push_back(point);
                 }
@@ -564,15 +571,16 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
         }
     }
 
-    std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
-    std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
-    std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
-    std::vector<std::vector<unsigned int>> dividedYCoordinatesSpan = getDividedCoordinatesSpan(yCoordinatesSpan);
-    std::vector<unsigned int> yCoordinatesSpanFirstHalf = {dividedYCoordinatesSpan.front().front(), dividedYCoordinatesSpan.front().back()};
-    std::vector<unsigned int> yCoordinatesSpanSecondHalf = {dividedYCoordinatesSpan.back().front(), dividedYCoordinatesSpan.back().back()};
-    std::vector<std::vector<unsigned int>> dividedZCoordinatesSpan = getDividedCoordinatesSpan(zCoordinatesSpan);
-    std::vector<unsigned int> zCoordinatesSpanFirstHalf = {dividedZCoordinatesSpan.front().front(), dividedZCoordinatesSpan.front().back()};
-    std::vector<unsigned int> zCoordinatesSpanSecondHalf = {dividedZCoordinatesSpan.back().front(), dividedZCoordinatesSpan.back().back()};
+    // std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
+    // std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
+    // std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
+    // std::vector<std::vector<unsigned int>> dividedYCoordinatesSpan = getDividedCoordinatesSpan(yCoordinatesSpan);
+    // std::vector<unsigned int> yCoordinatesSpanFirstHalf = {dividedYCoordinatesSpan.front().front(), dividedYCoordinatesSpan.front().back()};
+    // std::vector<unsigned int> yCoordinatesSpanSecondHalf = {dividedYCoordinatesSpan.back().front(), dividedYCoordinatesSpan.back().back()};
+    // std::vector<std::vector<unsigned int>> dividedZCoordinatesSpan = getDividedCoordinatesSpan(zCoordinatesSpan);
+    // std::vector<unsigned int> zCoordinatesSpanFirstHalf = {dividedZCoordinatesSpan.front().front(), dividedZCoordinatesSpan.front().back()};
+    // std::vector<unsigned int> zCoordinatesSpanSecondHalf = {dividedZCoordinatesSpan.back().front(), dividedZCoordinatesSpan.back().back()};
+
     // int midX = xCoordinatesSpan.size() / 2;
     // int midY = yCoordinatesSpan.size() / 2;
     // int midZ = zCoordinatesSpan.size() / 2;
@@ -582,14 +590,14 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     // std::vector<unsigned int> xCoordinatesSpanSecondHalf(xCoordinatesSpan.begin() + midX, xCoordinatesSpan.end());
     // std::vector<unsigned int> yCoordinatesSpanSecondHalf(yCoordinatesSpan.begin() + midY, yCoordinatesSpan.end());
     // std::vector<unsigned int> zCoordinatesSpanSecondHalf(zCoordinatesSpan.begin() + midZ, zCoordinatesSpan.end());
-    std::cout << "points1.size() = " << points1.size() << std::endl;
-    std::cout << "points2.size() = " << points2.size() << std::endl;
-    std::cout << "points3.size() = " << points3.size() << std::endl;
-    std::cout << "points4.size() = " << points4.size() << std::endl;
-    std::cout << "points5.size() = " << points5.size() << std::endl;
-    std::cout << "points6.size() = " << points6.size() << std::endl;
-    std::cout << "points7.size() = " << points7.size() << std::endl;
-    std::cout << "points8.size() = " << points8.size() << std::endl;
+    // std::cout << "points1.size() = " << points1.size() << std::endl;
+    // std::cout << "points2.size() = " << points2.size() << std::endl;
+    // std::cout << "points3.size() = " << points3.size() << std::endl;
+    // std::cout << "points4.size() = " << points4.size() << std::endl;
+    // std::cout << "points5.size() = " << points5.size() << std::endl;
+    // std::cout << "points6.size() = " << points6.size() << std::endl;
+    // std::cout << "points7.size() = " << points7.size() << std::endl;
+    // std::cout << "points8.size() = " << points8.size() << std::endl;
     // std::cout << "gesamt berechnet: " << points1.size() + points2.size() + points3.size() + points4.size() + points5.size() + points6.size() + points7.size() + points8.size() << std::endl;
     // std::cout << "xCoordinates: " << xCoordinatesSpan[0] << " - " << xCoordinatesSpan[1] << std::endl;
     // std::cout << "yCoordinates: " << yCoordinatesSpan[0] << " - " << yCoordinatesSpan[1] << std::endl;

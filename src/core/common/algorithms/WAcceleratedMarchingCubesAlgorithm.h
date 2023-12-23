@@ -491,6 +491,12 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
 template <typename T>
 std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan)
 {
+    std::cout << "calculateOctree:" << std::endl;
+    std::cout << "points.size(): " << points.size() << std::endl;
+    std::cout << "xCoordinatesSpan: " << xCoordinatesSpan[0] << " - " << xCoordinatesSpan[1] << std::endl;
+    std::cout << "yCoordinatesSpan: " << yCoordinatesSpan[0] << " - " << yCoordinatesSpan[1] << std::endl;
+    std::cout << "zCoordinatesSpan: " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[1] << std::endl;
+
     std::vector<WAcceleratedPointXYZId> result;
     if (points.size() == 1)
     {
@@ -499,6 +505,11 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     }
     else if (points.size() == 0)
     {
+        return result;
+    }
+    if (points.size() <= 8)
+    {
+        result.insert(result.end(), points.begin(), points.end());
         return result;
     }
 
@@ -605,7 +616,8 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
 
     if (points1.size() > 0)
     {
-        // std::cout << "points1.size() = " << points1.size() << std::endl;
+        std::cout << "points1.size() = " << points1.size() << std::endl;
+        std::cout << std::endl;
         bool inside = isInside(points1, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf);
         if (inside)
         {
@@ -737,22 +749,14 @@ bool WAcceleratedMarchingCubesAlgorithm::isInside(const std::vector<WAccelerated
     {
         return true;
     }
-    else if (xCoordinatesSpan.size() == 1 && yCoordinatesSpan.size() == 1 && zCoordinatesSpan.size() == 1)
-    {
-        return true;
-    }
-    else if (xCoordinatesSpan.size() == 0 || yCoordinatesSpan.size() == 0 || zCoordinatesSpan.size() == 0)
-    {
-        return false;
-    }
 
-    T firstValue = (*vals)[points[0].z * (xCoordinatesSpan.back() + 1) * (yCoordinatesSpan.back() + 1) + points[0].y * (xCoordinatesSpan.back() + 1) + points[0].x];
+    T firstValue = (*vals)[points[0].z * (xCoordinatesSpan.back()) * (yCoordinatesSpan.back()) + points[0].y * (xCoordinatesSpan.back()) + points[0].x];
     T lowestValue = firstValue;
     T highestValue = firstValue;
 
     for (const auto &point : points)
     {
-        T currentVal = (*vals)[point.z * (xCoordinatesSpan.back() + 1) * (yCoordinatesSpan.back() + 1) + point.y * (xCoordinatesSpan.back() + 1) + point.x];
+        T currentVal = (*vals)[point.z * (xCoordinatesSpan.back()) * (yCoordinatesSpan.back()) + point.y * (xCoordinatesSpan.back()) + point.x];
         if (currentVal < lowestValue)
         {
             lowestValue = currentVal;

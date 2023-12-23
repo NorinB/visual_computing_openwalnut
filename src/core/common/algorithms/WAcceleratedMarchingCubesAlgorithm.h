@@ -211,12 +211,6 @@ private:
     unsigned int getMiddleOfCoordinatesSpan(const std::vector<unsigned int> coordinatesSpan);
 
     /**
-     * Calculates the coordinates spans from the given points. One vector for x, y and z coordinates each.
-     * \param points the points to calculate the coordinates spans from
-     */
-    std::vector<std::vector<unsigned int>> calculateCoordinatesSpansFromPoints(const std::vector<WAcceleratedPointXYZId> &points);
-
-    /**
      * Calculates the octree for the given points and iso value. Calls itself recusively until it gets to the smallest possible octree.
      * \param points the points to calculate the octree for
      * \param isoValue the iso value to calculate the octree for
@@ -571,15 +565,15 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
         }
     }
 
-    // std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
-    // std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
-    // std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
-    // std::vector<std::vector<unsigned int>> dividedYCoordinatesSpan = getDividedCoordinatesSpan(yCoordinatesSpan);
-    // std::vector<unsigned int> yCoordinatesSpanFirstHalf = {dividedYCoordinatesSpan.front().front(), dividedYCoordinatesSpan.front().back()};
-    // std::vector<unsigned int> yCoordinatesSpanSecondHalf = {dividedYCoordinatesSpan.back().front(), dividedYCoordinatesSpan.back().back()};
-    // std::vector<std::vector<unsigned int>> dividedZCoordinatesSpan = getDividedCoordinatesSpan(zCoordinatesSpan);
-    // std::vector<unsigned int> zCoordinatesSpanFirstHalf = {dividedZCoordinatesSpan.front().front(), dividedZCoordinatesSpan.front().back()};
-    // std::vector<unsigned int> zCoordinatesSpanSecondHalf = {dividedZCoordinatesSpan.back().front(), dividedZCoordinatesSpan.back().back()};
+    std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
+    std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
+    std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
+    std::vector<std::vector<unsigned int>> dividedYCoordinatesSpan = getDividedCoordinatesSpan(yCoordinatesSpan);
+    std::vector<unsigned int> yCoordinatesSpanFirstHalf = {dividedYCoordinatesSpan.front().front(), dividedYCoordinatesSpan.front().back()};
+    std::vector<unsigned int> yCoordinatesSpanSecondHalf = {dividedYCoordinatesSpan.back().front(), dividedYCoordinatesSpan.back().back()};
+    std::vector<std::vector<unsigned int>> dividedZCoordinatesSpan = getDividedCoordinatesSpan(zCoordinatesSpan);
+    std::vector<unsigned int> zCoordinatesSpanFirstHalf = {dividedZCoordinatesSpan.front().front(), dividedZCoordinatesSpan.front().back()};
+    std::vector<unsigned int> zCoordinatesSpanSecondHalf = {dividedZCoordinatesSpan.back().front(), dividedZCoordinatesSpan.back().back()};
 
     // int midX = xCoordinatesSpan.size() / 2;
     // int midY = yCoordinatesSpan.size() / 2;

@@ -91,16 +91,31 @@ std::vector<std::vector<unsigned int>> WAcceleratedMarchingCubesAlgorithm::getDi
     std::vector<std::vector<unsigned int>> result;
     std::vector<unsigned int> firstHalf;
     std::vector<unsigned int> secondHalf;
-    if (coordinatesSpan[0] - coordinatesSpan[1] == 1 || coordinatesSpan[0] - coordinatesSpan[1] == 0)
+    if (coordinatesSpan[1] - coordinatesSpan[0] == 0)
     {
-        firstHalf = {coordinatesSpan.front(), coordinatesSpan.front()};
-        secondHalf = {coordinatesSpan.back(), coordinatesSpan.back()};
+        return result;
     }
+    else if (coordinatesSpan[1] - coordinatesSpan[0] == 1)
+    {
+        firstHalf = {coordinatesSpan.front(), coordinatesSpan.back()};
+        result.push_back(firstHalf);
+        return result;
+    }
+    // else if (coordinatesSpan[0] - coordinatesSpan[1] == 2)
+    // {
+    //     firstHalf = {coordinatesSpan.front(), coordinatesSpan.front() + 1};
+    //     secondHalf = {coordinatesSpan.front() + 1, coordinatesSpan.back()};
+    // }
+    // else if (coordinatesSpan[0] - coordinatesSpan[1] == 3)
+    // {
+    //     firstHalf = {coordinatesSpan.front(), coordinatesSpan.front() + 1};
+    //     secondHalf = {coordinatesSpan.front() + 1, coordinatesSpan.back()};
+    // }
     else
     {
-        unsigned int mid = coordinatesSpan.front() + ((coordinatesSpan.back() - coordinatesSpan.front()) / 2) + ((coordinatesSpan.back() - coordinatesSpan.front()) % 2);
+        unsigned int mid = coordinatesSpan.front() + ((coordinatesSpan.back() - coordinatesSpan.front()) / 2);
         firstHalf = {coordinatesSpan.front(), mid};
-        secondHalf = {mid + 1, coordinatesSpan.back()};
+        secondHalf = {mid, coordinatesSpan.back()};
     }
     result.push_back(firstHalf);
     result.push_back(secondHalf);
@@ -109,13 +124,22 @@ std::vector<std::vector<unsigned int>> WAcceleratedMarchingCubesAlgorithm::getDi
 
 unsigned int WAcceleratedMarchingCubesAlgorithm::getMiddleOfCoordinatesSpan(const std::vector<unsigned int> coordinatesSpan)
 {
-    if (coordinatesSpan[0] - coordinatesSpan[1] == 1)
+    if (coordinatesSpan[1] - coordinatesSpan[0] == 1)
     {
         return coordinatesSpan.back();
     }
-    else if (coordinatesSpan[0] - coordinatesSpan[1] == 0)
+    else if (coordinatesSpan[1] - coordinatesSpan[0] == 0)
     {
         return coordinatesSpan.front();
     }
-    return coordinatesSpan.front() + ((coordinatesSpan.back() - coordinatesSpan.front()) / 2) + ((coordinatesSpan.back() - coordinatesSpan.front()) % 2);
+    return coordinatesSpan.front() + ((coordinatesSpan.back() - coordinatesSpan.front()) / 2);
+}
+
+bool WAcceleratedMarchingCubesAlgorithm::isOnlyOneBlock(std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan)
+{
+    if (xCoordinatesSpan[1] - xCoordinatesSpan[0] == 1 && yCoordinatesSpan[1] - yCoordinatesSpan[0] == 1 && zCoordinatesSpan[1] - zCoordinatesSpan[0] == 1)
+    {
+        return true;
+    }
+    return false;
 }

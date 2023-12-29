@@ -590,12 +590,23 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
     std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
     std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
     std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
+    std::cout << "xCoordinatesSpan = " << xCoordinatesSpan[0] << " - " << xCoordinatesSpan[1] << std::endl;
+    std::cout << "xCoordinatesSpanFirstHalf = " << xCoordinatesSpanFirstHalf[0] << " - " << xCoordinatesSpanFirstHalf[1] << std::endl;
+    std::cout << "xCoordinatesSpanSecondHalf = " << xCoordinatesSpanSecondHalf[0] << " - " << xCoordinatesSpanSecondHalf[1] << std::endl;
+
     std::vector<std::vector<unsigned int>> dividedYCoordinatesSpan = getDividedCoordinatesSpan(yCoordinatesSpan);
     std::vector<unsigned int> yCoordinatesSpanFirstHalf = {dividedYCoordinatesSpan.front().front(), dividedYCoordinatesSpan.front().back()};
     std::vector<unsigned int> yCoordinatesSpanSecondHalf = {dividedYCoordinatesSpan.back().front(), dividedYCoordinatesSpan.back().back()};
+    std::cout << "yCoordinatesSpan = " << yCoordinatesSpan[0] << " - " << yCoordinatesSpan[1] << std::endl;
+    std::cout << "yCoordinatesSpanFirstHalf = " << yCoordinatesSpanFirstHalf[0] << " - " << yCoordinatesSpanFirstHalf[1] << std::endl;
+    std::cout << "yCoordinatesSpanSecondHalf = " << yCoordinatesSpanSecondHalf[0] << " - " << yCoordinatesSpanSecondHalf[1] << std::endl;
+
     std::vector<std::vector<unsigned int>> dividedZCoordinatesSpan = getDividedCoordinatesSpan(zCoordinatesSpan);
     std::vector<unsigned int> zCoordinatesSpanFirstHalf = {dividedZCoordinatesSpan.front().front(), dividedZCoordinatesSpan.front().back()};
     std::vector<unsigned int> zCoordinatesSpanSecondHalf = {dividedZCoordinatesSpan.back().front(), dividedZCoordinatesSpan.back().back()};
+    std::cout << "zCoordinatesSpan = " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[1] << std::endl;
+    std::cout << "zCoordinatesSpanFirstHalf = " << zCoordinatesSpanFirstHalf[0] << " - " << zCoordinatesSpanFirstHalf[1] << std::endl;
+    std::cout << "zCoordinatesSpanSecondHalf = " << zCoordinatesSpanSecondHalf[0] << " - " << zCoordinatesSpanSecondHalf[1] << std::endl << std::endl;
 
     // int midX = xCoordinatesSpan.size() / 2;
     // int midY = yCoordinatesSpan.size() / 2;

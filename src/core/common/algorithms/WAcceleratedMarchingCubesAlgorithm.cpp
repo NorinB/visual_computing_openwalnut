@@ -97,16 +97,18 @@ std::vector<std::vector<unsigned int>> WAcceleratedMarchingCubesAlgorithm::getDi
     }
     else if (coordinatesSpan[1] - coordinatesSpan[0] == 1)
     {
+        // std::cout << "Nur eine Hälfte, weil coordinatesSpan: " << coordinatesSpan.front() << " - " << coordinatesSpan.back() << std::endl << std::endl;
         firstHalf = {coordinatesSpan.front(), coordinatesSpan.back()};
         result.push_back(firstHalf);
+        result.push_back({});
         return result;
     }
-    // else if (coordinatesSpan[0] - coordinatesSpan[1] == 2)
+    // else if (coordinatesSpan[1] - coordinatesSpan[0] == 2)
     // {
     //     firstHalf = {coordinatesSpan.front(), coordinatesSpan.front() + 1};
     //     secondHalf = {coordinatesSpan.front() + 1, coordinatesSpan.back()};
     // }
-    // else if (coordinatesSpan[0] - coordinatesSpan[1] == 3)
+    // else if (coordinatesSpan[1] - coordinatesSpan[0] == 3)
     // {
     //     firstHalf = {coordinatesSpan.front(), coordinatesSpan.front() + 1};
     //     secondHalf = {coordinatesSpan.front() + 1, coordinatesSpan.back()};

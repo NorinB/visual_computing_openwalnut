@@ -320,6 +320,7 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
     // std::cout << "zCoordinatesSpan.size() = " << zCoordinatesSpan.size() << std::endl;
     // std::cout << "zCoordinatesSpan = " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[zCoordinatesSpan.size() - 1] << std::endl;
 
+    std::cout << "isoValue = " << isoValue << std::endl;
     points = calculateOctree(points, isoValue, vals, xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
     std::cout << "points.size() nach Octree-Berechnung = " << points.size() << std::endl;
 
@@ -500,26 +501,26 @@ template <typename T>
 std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan)
 {
     // std::cout << "calculateOctree:" << std::endl;
-    std::cout << "points.size(): " << points.size() << std::endl;
+    // std::cout << "points.size(): " << points.size() << std::endl;
     // std::cout << "xCoordinatesSpan: " << xCoordinatesSpan[0] << " - " << xCoordinatesSpan[1] << std::endl;
     // std::cout << "yCoordinatesSpan: " << yCoordinatesSpan[0] << " - " << yCoordinatesSpan[1] << std::endl;
     // std::cout << "zCoordinatesSpan: " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[1] << std::endl;
 
     std::vector<WAcceleratedPointXYZId> result;
-    // if (points.size() == 1)
-    // {
-    //     result.push_back(points.front());
-    //     return result;
-    // }
-    // else if (points.size() == 0)
-    // {
-    //     return result;
-    // }
-    if (points.size() < 8)
+    if (points.size() == 1)
     {
-        result.insert(result.end(), points.begin(), points.end());
+        result.push_back(points.front());
         return result;
     }
+    else if (points.size() == 0)
+    {
+        return result;
+    }
+    // if (points.size() < 8)
+    // {
+    //     result.insert(result.end(), points.begin(), points.end());
+    //     return result;
+    // }
 
     std::vector<WAcceleratedPointXYZId> points1;
     std::vector<WAcceleratedPointXYZId> points2;
@@ -584,6 +585,8 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
         }
     }
 
+
+
     std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
     std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
     std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
@@ -632,7 +635,7 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
             // std::cout << "points1 sind inside" << std::endl;
             if (isOnlyOneBlock(xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf))
             {
-                std::cout << "is only one block" << std::endl;
+                // std::cout << "is only one block" << std::endl;
                 result.insert(result.end(), points1.begin(), points1.end());
             }
             else
@@ -806,18 +809,18 @@ std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::calculat
 template <typename T>
 bool WAcceleratedMarchingCubesAlgorithm::isInside(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals)
 {
-    // if (points.size() == 0)
-    // {
-    //     return false;
-    // }
-    // else if (points.size() == 1)
-    // {
-    //     return false;
-    // }
-    if (points.size() <= 8)
+    if (points.size() == 0)
+    {
+        return false;
+    }
+    else if (points.size() == 1)
     {
         return true;
     }
+    // if (points.size() <= 8)
+    // {
+    //     return true;
+    // }
 
     unsigned int nX = m_nCellsX + 1;
     unsigned int nY = m_nCellsY + 1;
@@ -840,6 +843,10 @@ bool WAcceleratedMarchingCubesAlgorithm::isInside(const std::vector<WAccelerated
             highestValue = currentVal;
         }
     }
+
+    // std::cout << "lowestValue = " << lowestValue << std::endl;
+    // std::cout << "highestValue = " << highestValue << std::endl;
+    // std::cout << "ist dazwischen: " << (lowestValue <= isoValue && highestValue >= isoValue) << std::endl << std::endl;
 
     return lowestValue <= isoValue && highestValue >= isoValue;
 }

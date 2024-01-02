@@ -321,7 +321,8 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
     // std::cout << "zCoordinatesSpan = " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[zCoordinatesSpan.size() - 1] << std::endl;
 
     std::cout << "isoValue = " << isoValue << std::endl;
-    points = calculateOctree(points, isoValue, vals, xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
+    // points = calculateOctree(points, isoValue, vals, xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
+    points.resize(points.size() / 2);
     std::cout << "points.size() nach Octree-Berechnung = " << points.size() << std::endl;
 
     // Generate isosurface.

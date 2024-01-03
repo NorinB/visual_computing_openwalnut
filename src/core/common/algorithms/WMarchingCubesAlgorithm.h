@@ -265,7 +265,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::gen
                         m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
                     }
 
-                    if( x == m_nCellsX - 1 )
+                    // if( x == m_nCellsX - 1 )
                     {
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 4 )
                         {
@@ -280,7 +280,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::gen
                             m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
                         }
                     }
-                    if( y == m_nCellsY - 1 )
+                    // if( y == m_nCellsY - 1 )
                     {
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 2 )
                         {
@@ -295,7 +295,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::gen
                             m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
                         }
                     }
-                    if( z == m_nCellsZ - 1 )
+                    // if( z == m_nCellsZ - 1 )
                     {
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 16 )
                         {
@@ -310,14 +310,14 @@ template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::gen
                             m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
                         }
                     }
-                    if( ( x == m_nCellsX - 1 ) && ( y == m_nCellsY - 1 ) )
+                    // if( ( x == m_nCellsX - 1 ) && ( y == m_nCellsY - 1 ) )
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 1024 )
                         {
                             WPointXYZId pt = calculateIntersection( vals, x, y, z, 10 );
                             unsigned int id = getEdgeID( x, y, z, 10 );
                             m_idToVertices.insert( ID2WPointXYZId::value_type( id, pt ) );
                         }
-                    if( ( x == m_nCellsX - 1 ) && ( z == m_nCellsZ - 1 ) )
+                    // if( ( x == m_nCellsX - 1 ) && ( z == m_nCellsZ - 1 ) )
                         if( wMarchingCubesCaseTables::edgeTable[tableIndex] & 64 )
                         {
                             WPointXYZId pt = calculateIntersection( vals, x, y, z, 6 );

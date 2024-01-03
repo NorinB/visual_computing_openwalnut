@@ -321,8 +321,8 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
     // std::cout << "zCoordinatesSpan = " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[zCoordinatesSpan.size() - 1] << std::endl;
 
     std::cout << "isoValue = " << isoValue << std::endl;
-    // points = calculateOctree(points, isoValue, vals, xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
-    points.resize(points.size() / 2);
+    points = calculateOctree(points, isoValue, vals, xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
+    // points.resize(points.size() / 2);
     std::cout << "points.size() nach Octree-Berechnung = " << points.size() << std::endl;
 
     // Generate isosurface.
@@ -372,7 +372,7 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
                 m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
             }
 
-            if (point.x == m_nCellsX - 1)
+            // if (point.x == m_nCellsX - 1)
             {
                 if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 4)
                 {
@@ -387,7 +387,7 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
                     m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
                 }
             }
-            if (point.y == m_nCellsY - 1)
+            // if (point.y == m_nCellsY - 1)
             {
                 if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 2)
                 {
@@ -402,7 +402,7 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
                     m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
                 }
             }
-            if (point.z == m_nCellsZ - 1)
+            // if (point.z == m_nCellsZ - 1)
             {
                 if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 16)
                 {
@@ -417,21 +417,21 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
                     m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
                 }
             }
-            if ((point.x == m_nCellsX - 1) && (point.y == m_nCellsY - 1))
+            // if ((point.x == m_nCellsX - 1) && (point.y == m_nCellsY - 1))
                 if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 1024)
                 {
                     WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 10);
                     unsigned int id = getEdgeID(point.x, point.y, point.z, 10);
                     m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
                 }
-            if ((point.x == m_nCellsX - 1) && (point.z == m_nCellsZ - 1))
+            // if ((point.x == m_nCellsX - 1) && (point.z == m_nCellsZ - 1))
                 if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 64)
                 {
                     WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 6);
                     unsigned int id = getEdgeID(point.x, point.y, point.z, 6);
                     m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
                 }
-            if ((point.y == m_nCellsY - 1) && (point.z == m_nCellsZ - 1))
+            // if ((point.y == m_nCellsY - 1) && (point.z == m_nCellsZ - 1))
                 if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 32)
                 {
                     WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 5);

@@ -34,6 +34,7 @@
 #include "../math/WMatrix.h"
 #include "WMarchingCubesCaseTables.h"
 #include "core/graphicsEngine/WTriangleMesh.h"
+#include "Octree.h"
 
 /**
  * A point consisting of its coordinates and ID
@@ -140,6 +141,30 @@ public:
                                                    const std::vector<T> *vals,
                                                    double isoValue,
                                                    std::shared_ptr<WProgressCombiner> mainProgress);
+
+    /**
+     * Generates the Octree for the given points and iso value, which can be used later on to calculate the isosurface faster.
+     * \param points the points to calculate the octree for
+     * \param isoValue the iso value to calculate the octree for
+     * \param vals the values at the vertices
+     * \param xCoordinatesSpan x Coordinates of this octree element
+     * \param yCoordinates y Coordinates of this octree element
+     * \param zCoordinates z Coordinates of this octree element
+     * 
+     * \return the generated octree
+    */
+    template <typename T>
+    Octree generateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan);
+
+    /**
+     * Gets the min and max values of the given points and returns them as a vector, where the first value is the min and the second value is the max.
+     * \param points the points to get the min and max values from
+     * \param vals the values at the vertices
+     * 
+     * \return the min and max values as the vector
+    */
+    template <typename T>
+    std::vector<double> getMinAndMax(const std::vector<WAcceleratedPointXYZId> &points, const std::vector<T> *vals);
 
 protected:
 private:
@@ -495,6 +520,53 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
 
     progress->finish();
     return triMesh;
+}
+
+template <typename T>
+Octree WAcceleratedMarchingCubesAlgorithm::generateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan)
+{
+    Octree octree;
+    if (points.size() <= 8)
+    {
+        octree.points = points;
+        std::vector<double> minAndMax = getMinAndMax(points, vals);
+        octree.min = minAndMax[0];
+        octree.max = minAndMax[1];
+        return octree;
+    } 
+
+    
+    return octree;
+}
+
+template <typename T>
+std::vector<double> WAcceleratedMarchingCubesAlgorithm::getMinAndMax(const std::vector<WAcceleratedPointXYZId> &points, const std::vector<T> *vals)
+{
+    unsigned int nX = m_nCellsX + 1;
+    unsigned int nY = m_nCellsY + 1;
+    unsigned int nPointsInSlice = nX * nY;
+    if (points.size() == 0) {
+        return {};
+    } else if (points.size() == 1) {
+        return {(*vals)[points.front().z * nPointsInSlice + points.front().y * nX + points.front().x], (*vals)[points.front().z * nPointsInSlice + points.front().y * nY + points.front().x]};
+    }
+
+    double minValue = (*vals)[points.front().z * nPointsInSlice + points.front().y * nX + points.front().x];
+    double maxValue = (*vals)[points.front().z * nPointsInSlice + points.front().y * nY + points.front().x];
+    for (auto &point : points)
+    {
+        double value = (*vals)[point.z * nPointsInSlice + point.y * nX + point.x];
+        if (value < minValue)
+        {
+            minValue = value;
+        }
+        if (value > maxValue)
+        {
+            maxValue = value;
+        }
+    }
+
+    return {minValue, maxValue};
 }
 
 template <typename T>

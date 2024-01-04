@@ -132,6 +132,28 @@ public:
                                                    const std::vector<T> *vals,
                                                    double isoValue,
                                                    std::shared_ptr<WProgressCombiner> mainProgress);
+    /**
+     * Generate the triangles for the surface on the given dataSet (inGrid, vals). The texture coordinates in the resulting mesh are relative to
+     * the grid. This means they are NOT transformed. This ensure faster grid matrix updates in texture space.
+     * This might be useful where texture transformation matrices are used.
+     *
+     * \param nbCoordsX number of vertices in X direction
+     * \param nbCoordsY number of vertices in Y direction
+     * \param nbCoordsZ number of vertices in Z direction
+     * \param mat the matrix transforming the vertices from canonical space
+     * \param vals the values at the vertices
+     * \param isoValue The surface will run through all positions with this value.
+     * \param mainProgress progress combiner used to report our progress to
+     * \param octree Octree to use for the calculation
+     *
+     * \return the genereated surface
+     */
+    template <typename T>
+    std::shared_ptr<WTriangleMesh> generateSurfaceWithOctree(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+                                                   const WMatrix<double> &mat,
+                                                   const std::vector<T> *vals,
+                                                   double isoValue,
+                                                   std::shared_ptr<WProgressCombiner> mainProgress, Octree &octree);
 
     /**
      * Generates the Octree for the given points and iso value, which can be used later on to calculate the isosurface faster.
@@ -514,6 +536,253 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
 }
 
 template <typename T>
+std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfaceWithOctree(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
+                                                                                   const WMatrix<double> &mat,
+                                                                                   const std::vector<T> *vals,
+                                                                                   double isoValue,
+                                                                                   std::shared_ptr<WProgressCombiner> mainProgress, Octree &octree)
+{
+    WAssert(vals, "No value set provided.");
+
+    m_idToVertices.clear();
+    m_trivecTriangles.clear();
+
+    m_nCellsX = nbCoordsX - 1;
+    m_nCellsY = nbCoordsY - 1;
+    m_nCellsZ = nbCoordsZ - 1;
+
+    m_matrix = mat;
+
+    m_tIsoLevel = isoValue;
+
+    unsigned int nX = m_nCellsX + 1;
+    unsigned int nY = m_nCellsY + 1;
+
+    unsigned int nPointsInSlice = nX * nY;
+
+    std::shared_ptr<WProgress> progress(new WProgress("Accelerated Marching Cubes", m_nCellsZ));
+    mainProgress->addSubProgress(progress);
+
+    std::vector<WAcceleratedPointXYZId> points;
+    unsigned int index = 0;
+    for (unsigned int z = 0; z < m_nCellsZ; z++)
+    {
+        for (unsigned int y = 0; y < m_nCellsY; y++)
+        {
+            for (unsigned int x = 0; x < m_nCellsX; x++)
+            {
+                WAcceleratedPointXYZId point;
+                point.newID = index;
+                point.x = x;
+                point.y = y;
+                point.z = z;
+                points.push_back(point);
+            }
+        }
+        index++;
+    }
+
+    std::cout << points.back().x << " - " << points.back().y << " - " << points.back().z << std::endl;
+
+    std::cout << "points.size() am Anfang = " << points.size() << std::endl;
+    std::vector<unsigned int> xCoordinatesSpan = {0, m_nCellsX};
+    std::vector<unsigned int> yCoordinatesSpan = {0, m_nCellsY};
+    std::vector<unsigned int> zCoordinatesSpan = {0, m_nCellsZ};
+    // std::vector<unsigned int> xCoordinatesSpan(m_nCellsX + 1);
+    // std::iota(xCoordinatesSpan.begin(), xCoordinatesSpan.end(), 0);
+    // std::vector<unsigned int> yCoordinatesSpan(m_nCellsY + 1);
+    // std::iota(yCoordinatesSpan.begin(), yCoordinatesSpan.end(), 0);
+    // std::vector<unsigned int> zCoordinatesSpan(m_nCellsZ + 1);
+    // std::iota(zCoordinatesSpan.begin(), zCoordinatesSpan.end(), 0);
+    // std::cout << "x coordinates: " << m_nCellsX << std::endl;
+    // std::cout << "xCoordinatesSpan.size() = " << xCoordinatesSpan.size() << std::endl;
+    // std::cout << "xCoordinatesSpan = " << xCoordinatesSpan[0] << " - " << xCoordinatesSpan[xCoordinatesSpan.size() - 1] << std::endl;
+    // std::cout << "y coordinates: " << m_nCellsY << std::endl;
+    // std::cout << "yCoordinatesSpan.size() = " << yCoordinatesSpan.size() << std::endl;
+    // std::cout << "yCoordinatesSpan = " << yCoordinatesSpan[0] << " - " << yCoordinatesSpan[yCoordinatesSpan.size() - 1] << std::endl;
+    // std::cout << "z coordinates: " << m_nCellsZ << std::endl;
+    // std::cout << "zCoordinatesSpan.size() = " << zCoordinatesSpan.size() << std::endl;
+    // std::cout << "zCoordinatesSpan = " << zCoordinatesSpan[0] << " - " << zCoordinatesSpan[zCoordinatesSpan.size() - 1] << std::endl;
+
+    std::cout << "isoValue = " << isoValue << std::endl;
+    // points = calculateOctree(points, isoValue, vals, xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
+    points = octree.getPointsIncludingIsoValue(isoValue);
+    std::cout << "points.size() nach Octree-Berechnung = " << points.size() << std::endl;
+
+    // Generate isosurface.
+    for (const auto &point : points)
+    {
+        ++*progress;
+        // Calculate table lookup index from those
+        // vertices which are below the isolevel.
+        unsigned int tableIndex = 0;
+        if ((*vals)[point.z * nPointsInSlice + point.y * nX + point.x] < m_tIsoLevel)
+            tableIndex |= 1;
+        if ((*vals)[point.z * nPointsInSlice + (point.y + 1) * nX + point.x] < m_tIsoLevel)
+            tableIndex |= 2;
+        if ((*vals)[point.z * nPointsInSlice + (point.y + 1) * nX + (point.x + 1)] < m_tIsoLevel)
+            tableIndex |= 4;
+        if ((*vals)[point.z * nPointsInSlice + point.y * nX + (point.x + 1)] < m_tIsoLevel)
+            tableIndex |= 8;
+        if ((*vals)[(point.z + 1) * nPointsInSlice + point.y * nX + point.x] < m_tIsoLevel)
+            tableIndex |= 16;
+        if ((*vals)[(point.z + 1) * nPointsInSlice + (point.y + 1) * nX + point.x] < m_tIsoLevel)
+            tableIndex |= 32;
+        if ((*vals)[(point.z + 1) * nPointsInSlice + (point.y + 1) * nX + (point.x + 1)] < m_tIsoLevel)
+            tableIndex |= 64;
+        if ((*vals)[(point.z + 1) * nPointsInSlice + point.y * nX + (point.x + 1)] < m_tIsoLevel)
+            tableIndex |= 128;
+
+        // Now create a triangulation of the isosurface in this
+        // cell.
+        if (wMarchingCubesCaseTables::edgeTable[tableIndex] != 0)
+        {
+            if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 8)
+            {
+                WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 3);
+                unsigned int id = getEdgeID(point.x, point.y, point.z, 3);
+                m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+            }
+            if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 1)
+            {
+                WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 0);
+                unsigned int id = getEdgeID(point.x, point.y, point.z, 0);
+                m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+            }
+            if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 256)
+            {
+                WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 8);
+                unsigned int id = getEdgeID(point.x, point.y, point.z, 8);
+                m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+            }
+
+            // if (point.x == m_nCellsX - 1)
+            {
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 4)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 2);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 2);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 2048)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 11);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 11);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+            }
+            // if (point.y == m_nCellsY - 1)
+            {
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 2)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 1);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 1);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 512)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 9);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 9);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+            }
+            // if (point.z == m_nCellsZ - 1)
+            {
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 16)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 4);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 4);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 128)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 7);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 7);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+            }
+            // if ((point.x == m_nCellsX - 1) && (point.y == m_nCellsY - 1))
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 1024)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 10);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 10);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+            // if ((point.x == m_nCellsX - 1) && (point.z == m_nCellsZ - 1))
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 64)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 6);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 6);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+            // if ((point.y == m_nCellsY - 1) && (point.z == m_nCellsZ - 1))
+                if (wMarchingCubesCaseTables::edgeTable[tableIndex] & 32)
+                {
+                    WAcceleratedPointXYZId pt = calculateIntersection(vals, point.x, point.y, point.z, 5);
+                    unsigned int id = getEdgeID(point.x, point.y, point.z, 5);
+                    m_idToVertices.insert(ID2WAcceleratedPointXYZId::value_type(id, pt));
+                }
+
+            for (int i = 0; wMarchingCubesCaseTables::triTable[tableIndex][i] != -1; i += 3)
+            {
+                WAcceleratedMCTriangle triangle;
+                unsigned int pointID0, pointID1, pointID2;
+                pointID0 = getEdgeID(point.x, point.y, point.z, wMarchingCubesCaseTables::triTable[tableIndex][i]);
+                pointID1 = getEdgeID(point.x, point.y, point.z, wMarchingCubesCaseTables::triTable[tableIndex][i + 1]);
+                pointID2 = getEdgeID(point.x, point.y, point.z, wMarchingCubesCaseTables::triTable[tableIndex][i + 2]);
+                triangle.pointID[0] = pointID0;
+                triangle.pointID[1] = pointID1;
+                triangle.pointID[2] = pointID2;
+                m_trivecTriangles.push_back(triangle);
+            }
+        }
+    }
+
+    unsigned int nextID = 0;
+    std::shared_ptr<WTriangleMesh> triMesh(new WTriangleMesh(m_idToVertices.size(), m_trivecTriangles.size()));
+
+    // Rename vertices.
+    ID2WAcceleratedPointXYZId::iterator mapIterator = m_idToVertices.begin();
+    while (mapIterator != m_idToVertices.end())
+    {
+        WPosition texCoord = WPosition(mapIterator->second.x / nbCoordsX,
+                                       mapIterator->second.y / nbCoordsY,
+                                       mapIterator->second.z / nbCoordsZ);
+
+        // transform from grid coordinate system to world coordinates
+        WPosition pos = WPosition(mapIterator->second.x, mapIterator->second.y, mapIterator->second.z);
+
+        std::vector<double> resultPos4D(4);
+        resultPos4D[0] = m_matrix(0, 0) * pos[0] + m_matrix(0, 1) * pos[1] + m_matrix(0, 2) * pos[2] + m_matrix(0, 3) * 1;
+        resultPos4D[1] = m_matrix(1, 0) * pos[0] + m_matrix(1, 1) * pos[1] + m_matrix(1, 2) * pos[2] + m_matrix(1, 3) * 1;
+        resultPos4D[2] = m_matrix(2, 0) * pos[0] + m_matrix(2, 1) * pos[1] + m_matrix(2, 2) * pos[2] + m_matrix(2, 3) * 1;
+        resultPos4D[3] = m_matrix(3, 0) * pos[0] + m_matrix(3, 1) * pos[1] + m_matrix(3, 2) * pos[2] + m_matrix(3, 3) * 1;
+
+        (*mapIterator).second.newID = nextID;
+        triMesh->addVertex(resultPos4D[0] / resultPos4D[3], resultPos4D[1] / resultPos4D[3], resultPos4D[2] / resultPos4D[3]);
+        triMesh->addTextureCoordinate(texCoord);
+        nextID++;
+        mapIterator++;
+    }
+
+    // Now rename triangles.
+    WAcceleratedMCTriangleVECTOR::iterator vecIterator = m_trivecTriangles.begin();
+    while (vecIterator != m_trivecTriangles.end())
+    {
+        for (unsigned int i = 0; i < 3; i++)
+        {
+            unsigned int newID = m_idToVertices[(*vecIterator).pointID[i]].newID;
+            (*vecIterator).pointID[i] = newID;
+        }
+        triMesh->addTriangle((*vecIterator).pointID[0], (*vecIterator).pointID[1], (*vecIterator).pointID[2]);
+        vecIterator++;
+    }
+
+    progress->finish();
+    return triMesh;
+}
+
+template <typename T>
 Octree WAcceleratedMarchingCubesAlgorithm::generateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, const std::vector<T> *vals, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan)
 {
     Octree octree;
@@ -526,7 +795,88 @@ Octree WAcceleratedMarchingCubesAlgorithm::generateOctree(const std::vector<WAcc
         return octree;
     } 
 
+    std::vector<WAcceleratedPointXYZId> points1;
+    std::vector<WAcceleratedPointXYZId> points2;
+    std::vector<WAcceleratedPointXYZId> points3;
+    std::vector<WAcceleratedPointXYZId> points4;
+    std::vector<WAcceleratedPointXYZId> points5;
+    std::vector<WAcceleratedPointXYZId> points6;
+    std::vector<WAcceleratedPointXYZId> points7;
+    std::vector<WAcceleratedPointXYZId> points8;
+
+    for (const auto &point : points)
+    {
+        if (point.x < getMiddleOfCoordinatesSpan(xCoordinatesSpan))
+        {
+            if (point.y < getMiddleOfCoordinatesSpan(yCoordinatesSpan))
+            {
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
+                {
+                    points1.push_back(point);
+                }
+                else
+                {
+                    points2.push_back(point);
+                }
+            }
+            else
+            {
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
+                {
+                    points3.push_back(point);
+                }
+                else
+                {
+                    points4.push_back(point);
+                }
+            }
+        }
+        else
+        {
+            if (point.y < getMiddleOfCoordinatesSpan(yCoordinatesSpan))
+            {
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
+                {
+                    points5.push_back(point);
+                }
+                else
+                {
+                    points6.push_back(point);
+                }
+            }
+            else
+            {
+                if (point.z < getMiddleOfCoordinatesSpan(zCoordinatesSpan))
+                {
+                    points7.push_back(point);
+                }
+                else
+                {
+                    points8.push_back(point);
+                }
+            }
+        }
+    }
     
+    std::vector<std::vector<unsigned int>> dividedXCoordinatesSpan = getDividedCoordinatesSpan(xCoordinatesSpan);
+    std::vector<unsigned int> xCoordinatesSpanFirstHalf = {dividedXCoordinatesSpan.front().front(), dividedXCoordinatesSpan.front().back()};
+    std::vector<unsigned int> xCoordinatesSpanSecondHalf = {dividedXCoordinatesSpan.back().front(), dividedXCoordinatesSpan.back().back()};
+    std::vector<std::vector<unsigned int>> dividedYCoordinatesSpan = getDividedCoordinatesSpan(yCoordinatesSpan);
+    std::vector<unsigned int> yCoordinatesSpanFirstHalf = {dividedYCoordinatesSpan.front().front(), dividedYCoordinatesSpan.front().back()};
+    std::vector<unsigned int> yCoordinatesSpanSecondHalf = {dividedYCoordinatesSpan.back().front(), dividedYCoordinatesSpan.back().back()};
+    std::vector<std::vector<unsigned int>> dividedZCoordinatesSpan = getDividedCoordinatesSpan(zCoordinatesSpan);
+    std::vector<unsigned int> zCoordinatesSpanFirstHalf = {dividedZCoordinatesSpan.front().front(), dividedZCoordinatesSpan.front().back()};
+    std::vector<unsigned int> zCoordinatesSpanSecondHalf = {dividedZCoordinatesSpan.back().front(), dividedZCoordinatesSpan.back().back()};
+
+    octree.children.push_back(generateOctree(points1, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf));
+    octree.children.push_back(generateOctree(points2, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf));
+    octree.children.push_back(generateOctree(points3, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanFirstHalf));
+    octree.children.push_back(generateOctree(points4, isoValue, vals, xCoordinatesSpanFirstHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf));
+    octree.children.push_back(generateOctree(points5, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanFirstHalf));
+    octree.children.push_back(generateOctree(points6, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanFirstHalf, zCoordinatesSpanSecondHalf));
+    octree.children.push_back(generateOctree(points7, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanFirstHalf));
+    octree.children.push_back(generateOctree(points8, isoValue, vals, xCoordinatesSpanSecondHalf, yCoordinatesSpanSecondHalf, zCoordinatesSpanSecondHalf));
+
     return octree;
 }
 

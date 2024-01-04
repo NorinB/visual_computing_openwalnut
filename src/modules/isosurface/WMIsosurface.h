@@ -41,6 +41,7 @@
 #include "core/kernel/WModule.h"
 #include "core/kernel/WModuleInputData.h"
 #include "core/kernel/WModuleOutputData.h"
+#include "core/common/algorithms/Octree.h"
 
 /**
  * Module implementing the marching cubes algorithm with consistent triangulation for data
@@ -167,6 +168,9 @@ private:
      * The shader
      */
     osg::ref_ptr< WGEShader > m_shader;
+
+    // The Octree to use for accelerated marching cubes
+    Octree octree;
 };
 
 #endif  // WMISOSURFACE_H

@@ -151,7 +151,7 @@ void WMIsosurface::moduleMain()
         // query changes in data and data validity
         bool dataChanged = m_input->handledUpdate();
         std::shared_ptr< WDataSetScalar > incomingDataSet = m_input->getData( true );
-        bool propChanged = m_useMarchingLego->changed() || m_isoValueProp->changed();
+        bool propChanged = m_useMarchingLego->changed() || m_isoValueProp->changed() || m_useAcceleratedMarchingCubes->changed();
         if( !incomingDataSet )
         {
             // OK, we have not yet recieved data
@@ -250,7 +250,7 @@ void WMIsosurface::properties()
 
     m_useMarchingLego = m_properties->addProperty( "Voxel surface", "Not interpolated surface", false, m_recompute );
 
-    m_useAcceleratedMarchingCubes = m_properties->addProperty( "Use accelerated Marching Cubes", "Toggle the use of accelerated marching cubes", false);
+    m_useAcceleratedMarchingCubes = m_properties->addProperty( "Use accelerated Marching Cubes", "Toggle the use of accelerated marching cubes", false, m_recompute);
 
     WModule::properties();
 }

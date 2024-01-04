@@ -7,7 +7,7 @@
 #include <vector>
 #include <numeric>
 
-#include "WAcceleratedMarchingCubesAlgorithm.h"
+#include "WAcceleratedPointXYZId.h"
 
 class Octree
 {

@@ -36,16 +36,7 @@
 #include "core/graphicsEngine/WTriangleMesh.h"
 #include "Octree.h"
 
-/**
- * A point consisting of its coordinates and ID
- */
-struct WAcceleratedPointXYZId
-{
-    unsigned int newID; //!< ID of the point
-    double x;           //!< x coordinates of the point.
-    double y;           //!< y coordinates of the point.
-    double z;           //!< z coordinates of the point.
-};
+#include "WAcceleratedPointXYZId.h"
 
 typedef std::map<unsigned int, WAcceleratedPointXYZId> ID2WAcceleratedPointXYZId;
 

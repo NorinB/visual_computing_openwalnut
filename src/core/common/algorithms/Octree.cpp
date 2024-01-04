@@ -1,7 +1,6 @@
 #include <vector>
 
 #include "Octree.h"
-#include "WAcceleratedMarchingCubesAlgorithm.h"
 
 Octree::Octree()
 {

@@ -172,7 +172,8 @@ void WMIsosurface::moduleMain()
             {
                 m_isoValueProp->set(0.5 * (m_dataSet->getMax() + m_dataSet->getMin()), true);
             }
-
+            
+            // reset octree, because data has changed
             octree.reset();
         }
 
@@ -257,85 +258,6 @@ void WMIsosurface::properties()
 
 namespace
 {
-    // /**
-    //  * A template-less base class to combine both Marching-Cube-like algorithms using one interface
-    //  */
-    // struct AMCBase
-    // {
-    //     virtual ~AMCBase()
-    //     {
-    //     }
-
-    //     virtual std::vector<WAcceleratedPointXYZId> getPoints(unsigned int xCells, unsigned int yCells, unsigned int zCells) = 0;
-
-    //     virtual Octree generateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, std::shared_ptr<WValueSetBase> valueSet, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan) = 0;
-
-    //     virtual std::shared_ptr<WTriangleMesh> generateSurfaceWithOctree(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-    //                                                                      const WMatrix<double> &mat,
-    //                                                                      std::shared_ptr<WValueSetBase> valueSet,
-    //                                                                      double isoValue,
-    //                                                                      std::shared_ptr<WProgressCombiner> progress, Octree &octree) = 0;
-    // };
-
-    // /**
-    //  * Base class templetized by the algorithm used, i.e., real marching cubes or lego bricks
-    //  * This class enhances the interface of the MC algorithm by the new execute function.
-    //  */
-    // template <class AcceleratedAlgoBase>
-    // struct AMCAlgoMapperBase : public AcceleratedAlgoBase, public AMCBase
-    // {
-    //     virtual ~AMCAlgoMapperBase()
-    //     {
-    //     }
-    // };
-
-    // /**
-    //  * this class matches a data type and an algorithm type
-    //  *
-    //  * It is a helper class that converts the type to call the appropriate function in the MC code
-    //  * in the original algorithm.
-    //  *
-    //  * \param AcceleratedAlgoBase
-    //  * AcceleratedAlgoBase is the algorithm that will be called and must implement
-    //  * AcceleratedAlgoBase::generateSurface( x,y,z, matrix, vals_raw_ptr, isoValue, progress )
-    //  */
-    // template <class AcceleratedAlgoBase, typename T>
-    // struct AMCAlgoMapper : public AMCAlgoMapperBase<AcceleratedAlgoBase>
-    // {
-    //     virtual ~AMCAlgoMapper()
-    //     {
-    //     }
-
-    //     virtual std::vector<WAcceleratedPointXYZId> getPoints(unsigned int xCells, unsigned int yCells, unsigned int zCells)
-    //     {
-    //         return AcceleratedAlgoBase::getPoints(xCells, yCells, zCells);
-    //     }
-
-    //     virtual Octree generateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, std::shared_ptr<WValueSetBase> valueSet, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan)
-    //     {
-    //         std::shared_ptr<WValueSet<T>> vals(
-    //         std::dynamic_pointer_cast<WValueSet<T>>(valueSet));
-    //         WAssert(vals, "Data type and data type indicator must fit.");
-    //         return AcceleratedAlgoBase::generateOctree(points, isoValue, vals->rawDataVectorPointer(), xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
-    //     }
-
-    //     virtual std::shared_ptr<WTriangleMesh> generateSurfaceWithOctree(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-    //                                                                      const WMatrix<double> &mat,
-    //                                                                      std::shared_ptr<WValueSetBase> valueSet,
-    //                                                                      double isoValue,
-    //                                                                      std::shared_ptr<WProgressCombiner> progress, Octree &octree)
-    //     {
-    //         std::shared_ptr<WValueSet<T>> vals(
-    //         std::dynamic_pointer_cast<WValueSet<T>>(valueSet));
-    //         WAssert(vals, "Data type and data type indicator must fit.");
-    //         return AcceleratedAlgoBase::generateSurfaceWithOctree(nbCoordsX, nbCoordsY, nbCoordsZ,
-    //                                                    mat,
-    //                                                    vals->rawDataVectorPointer(),
-    //                                                    isoValue,
-    //                                                    progress, octree);
-    //     }
-    // };
-
     /**
      * A template-less base class to combine both Marching-Cube-like algorithms using one interface
      */
@@ -350,16 +272,6 @@ namespace
                                                        std::shared_ptr<WValueSetBase> valueSet,
                                                        double isoValue,
                                                        std::shared_ptr<WProgressCombiner>) = 0;
-
-        // virtual std::vector<WAcceleratedPointXYZId> getPoints(unsigned int xCells, unsigned int yCells, unsigned int zCells) = 0;
-
-        // virtual Octree generateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, std::shared_ptr<WValueSetBase> valueSet, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan) = 0;
-
-        // virtual std::shared_ptr<WTriangleMesh> generateSurfaceWithOctree(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-        //                                                                  const WMatrix<double> &mat,
-        //                                                                  std::shared_ptr<WValueSetBase> valueSet,
-        //                                                                  double isoValue,
-        //                                                                  std::shared_ptr<WProgressCombiner> progress, Octree &octree) = 0;
     };
 
     /**
@@ -402,29 +314,6 @@ namespace
             WAssert(vals, "Data type and data type indicator must fit.");
             return AlgoBase::generateSurface(x, y, z, matrix, vals->rawDataVectorPointer(), isoValue, progress);
         }
-
-        // virtual std::vector<WAcceleratedPointXYZId> getPoints(unsigned int xCells, unsigned int yCells, unsigned int zCells)
-        // {
-        //     return AlgoBase::getPoints(xCells, yCells, zCells);
-        // }
-
-        // virtual Octree generateOctree(const std::vector<WAcceleratedPointXYZId> &points, double isoValue, std::shared_ptr<WValueSetBase> valueSet, std::vector<unsigned int> xCoordinatesSpan, std::vector<unsigned int> yCoordinatesSpan, std::vector<unsigned int> zCoordinatesSpan)
-        // {
-        //     return AlgoBase::generateOctree(points, isoValue, valueSet->rawDataVectorPointer(), xCoordinatesSpan, yCoordinatesSpan, zCoordinatesSpan);
-        // }
-
-        // virtual std::shared_ptr<WTriangleMesh> generateSurfaceWithOctree(size_t nbCoordsX, size_t nbCoordsY, size_t nbCoordsZ,
-        //                                                                  const WMatrix<double> &mat,
-        //                                                                  std::shared_ptr<WValueSetBase> valueSet,
-        //                                                                  double isoValue,
-        //                                                                  std::shared_ptr<WProgressCombiner> progress, Octree &octree)
-        // {
-        //     return AlgoBase::generateSurfaceWithOctree(nbCoordsX, nbCoordsY, nbCoordsZ,
-        //                                                mat,
-        //                                                valueSet->rawDataVectorPointer(),
-        //                                                isoValue,
-        //                                                progress, octree);
-        // }
     };
 
     /**
@@ -466,46 +355,6 @@ namespace
         return std::shared_ptr<MCAlgoMapperBase<AlgoBase>>(); // something went wrong, we got an unreasonable type
 #undef CASE
     }
-
-    //     /**
-    //      * Function to create the appropriate algorithm code for the data type.
-    //      * The selection is done based on a list of valid types.
-    //      * New data types for this module have to be added here ( and only here ).
-    //      *
-    //      * \param AlgoBase
-    //      * AlgoBase is the algorithm that will be called and must implement
-    //      * AlgoBase::generateSurface( x,y,z, matrix, vals_raw_ptr, isoValue, progress )
-    //      *
-    //      * \param enum_type the OpenWalnut type enum of the data on which the isosurface should be computed.
-    //      */
-    //     template <typename AcceleratedAlgoBase>
-    //     std::shared_ptr<AMCAlgoMapperBase<AcceleratedAlgoBase>> createAcceleratedMarchingCubesAlgorithm(int enum_type)
-    //     {
-    // #define CASE(enum_type) \
-//     case enum_type:     \
-//         return std::shared_ptr<AMCAlgoMapperBase<AcceleratedAlgoBase>>(new AMCAlgoMapper<AcceleratedAlgoBase, DataTypeRT<enum_type>::type>())
-
-    //         switch (enum_type)
-    //         {
-    //             // CASE( W_DT_BINARY ); // the cast operation DataTypeRT is not implemented for binaries, so far
-    //             CASE(W_DT_UNSIGNED_CHAR);
-    //             CASE(W_DT_INT8);
-    //             CASE(W_DT_SIGNED_SHORT); // INT16
-    //             CASE(W_DT_SIGNED_INT);   // INT32
-    //             CASE(W_DT_FLOAT);
-    //             CASE(W_DT_DOUBLE);
-    //             CASE(W_DT_UINT16);
-    //             CASE(W_DT_UINT32);
-    //             CASE(W_DT_INT64);
-    //             CASE(W_DT_UINT64);
-    //             CASE(W_DT_FLOAT128);
-    //         // no complex 128 or complex 256, no rgba
-    //         default:
-    //             WAssert(false, "Data type not implemented because it is not a scalar or just not implemented, yet");
-    //         }
-    //         return std::shared_ptr<AMCAlgoMapperBase<AcceleratedAlgoBase>>(); // something went wrong, we got an unreasonable type
-    // #undef CASE
-    //     }
 
     template <typename T>
     std::shared_ptr<WValueSet<T>> convertValueSet(std::shared_ptr<WValueSetBase> valueSet)
@@ -564,9 +413,6 @@ void WMIsosurface::generateSurfacePre(double isoValue)
         unsigned int yCells = yCoords - 1;
         unsigned int zCells = zCoords - 1;
 
-        // std::shared_ptr<AMCBase> accelAlgo = createAcceleratedMarchingCubesAlgorithm<WAcceleratedMarchingCubesAlgorithm>(valueSet->getDataType());
-        // if (accelAlgo)
-        // {
         std::vector<unsigned int> xCoordinatesSpan = {0, xCells};
         std::vector<unsigned int> yCoordinatesSpan = {0, yCells};
         std::vector<unsigned int> zCoordinatesSpan = {0, zCells};
@@ -585,7 +431,6 @@ void WMIsosurface::generateSurfacePre(double isoValue)
         m_nbVertices->set(m_triMesh->vertSize());
 
 
-        // }
     }
 }
 

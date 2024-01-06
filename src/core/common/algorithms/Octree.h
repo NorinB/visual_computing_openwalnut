@@ -15,7 +15,6 @@ public:
   Octree();
   std::vector<WAcceleratedPointXYZId> getPointsIncludingIsoValue(double isoValue);
   std::vector<double> calculateMinAndMax();
-  void print();
   unsigned int countPoints();
   double min;
   double max;

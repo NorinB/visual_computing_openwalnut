@@ -909,7 +909,7 @@ std::vector<double> WAcceleratedMarchingCubesAlgorithm::getMinAndMax(const std::
     else if (points.size() == 1)
     {
         // std::cout << "points sind 1" << std::endl;
-        return {(*vals)[points.front().z * nPointsInSlice + points.front().y * nX + points.front().x], (*vals)[points.front().z * nPointsInSlice + points.front().y * nY + points.front().x]};
+        return {(*vals)[points.front().z * nPointsInSlice + points.front().y * nX + points.front().x], (*vals)[points.front().z * nPointsInSlice + points.front().y * nX + points.front().x]};
     }
 
     // std::cout << "points sind ungleich 0 oder 1, also: " << points.size() << std::endl;

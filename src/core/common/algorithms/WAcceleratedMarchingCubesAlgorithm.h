@@ -193,6 +193,18 @@ public:
      */
     std::vector<WAcceleratedPointXYZId> getPoints(unsigned int xCells, unsigned int yCells, unsigned int zCells);
 
+    /**
+     * Constructs a vector of points, which are inside the given coordinates span.
+     * \param point root point of the cell
+     * \param vals the values at the vertices
+     * \param xCells number of cells in x direction
+     * \param yCells number of cells in y direction
+     *
+     * \return the vector of points
+     */
+    template <typename T>
+    std::vector<T> getMinAndMaxOfCell(WAcceleratedPointXYZId point, const std::vector<T> *vals, unsigned int xCells, unsigned int yCells);    
+
 protected:
 private:
     /**
@@ -893,6 +905,67 @@ Octree WAcceleratedMarchingCubesAlgorithm::generateOctree(const std::vector<WAcc
 }
 
 template <typename T>
+std::vector<T> WAcceleratedMarchingCubesAlgorithm::getMinAndMaxOfCell(WAcceleratedPointXYZId point, const std::vector<T> *vals, unsigned int xCells, unsigned int yCells)
+{
+    unsigned int nX = xCells + 1;
+    unsigned int nY = yCells + 1;
+    unsigned int nPointsInSlice = nX * nY;
+    T minValue = (*vals)[point.z * nPointsInSlice + point.y * nX + point.x];
+    T maxValue = (*vals)[point.z * nPointsInSlice + point.y * nX + point.x];
+    T valueAtPoint1 = (*vals)[point.z * nPointsInSlice + point.y * nX + point.x];
+    T valueAtPoint2 = (*vals)[point.z * nPointsInSlice + point.y * nX + (point.x + 1)];
+    T valueAtPoint3 = (*vals)[point.z * nPointsInSlice + (point.y + 1) * nX + point.x];
+    T valueAtPoint4 = (*vals)[point.z * nPointsInSlice + (point.y + 1) * nX + (point.x + 1)];
+    T valueAtPoint5 = (*vals)[(point.z + 1) * nPointsInSlice + point.y * nX + point.x];
+    T valueAtPoint6 = (*vals)[(point.z + 1) * nPointsInSlice + point.y * nX + (point.x + 1)];
+    T valueAtPoint7 = (*vals)[(point.z + 1) * nPointsInSlice + (point.y + 1) * nX + point.x];
+    T valueAtPoint8 = (*vals)[(point.z + 1) * nPointsInSlice + (point.y + 1) * nX + (point.x + 1)];
+    if (valueAtPoint1 < minValue) {
+        minValue = valueAtPoint1;
+    } else if (valueAtPoint1 > maxValue) {
+        maxValue = valueAtPoint1;
+    }
+    if (valueAtPoint2 < minValue) {
+        minValue = valueAtPoint2;
+    } else if (valueAtPoint2 > maxValue) {
+        maxValue = valueAtPoint2;
+    }
+    if (valueAtPoint3 < minValue) {
+        minValue = valueAtPoint3;
+    } else if (valueAtPoint3 > maxValue) {
+        maxValue = valueAtPoint3;
+    }
+    if (valueAtPoint4 < minValue) {
+        minValue = valueAtPoint4;
+    } else if (valueAtPoint4 > maxValue) {
+        maxValue = valueAtPoint4;
+    }
+    if (valueAtPoint5 < minValue) {
+        minValue = valueAtPoint5;
+    } else if (valueAtPoint5 > maxValue) {
+        maxValue = valueAtPoint5;
+    }
+    if (valueAtPoint6 < minValue) {
+        minValue = valueAtPoint6;
+    } else if (valueAtPoint6 > maxValue) {
+        maxValue = valueAtPoint6;
+    }
+    if (valueAtPoint7 < minValue) {
+        minValue = valueAtPoint7;
+    } else if (valueAtPoint7 > maxValue) {
+        maxValue = valueAtPoint7;
+    }
+    if (valueAtPoint8 < minValue) {
+        minValue = valueAtPoint8;
+    } else if (valueAtPoint8 > maxValue) {
+        maxValue = valueAtPoint8;
+    }
+
+    return {minValue, maxValue};
+}
+
+
+template <typename T>
 std::vector<double> WAcceleratedMarchingCubesAlgorithm::getMinAndMax(const std::vector<WAcceleratedPointXYZId> &points, const std::vector<T> *vals, unsigned int xCells, unsigned int yCells)
 {
     // std::cout << "xCells: " << xCells << std::endl;
@@ -928,14 +1001,17 @@ std::vector<double> WAcceleratedMarchingCubesAlgorithm::getMinAndMax(const std::
     // std::cout << "Default minValue und maxValue gesetzt" << std::endl;
     for (auto &point : points)
     {
-        double value = (*vals)[point.z * nPointsInSlice + point.y * nX + point.x];
-        if (value < minValue)
+        // double value = (*vals)[point.z * nPointsInSlice + point.y * nX + point.x];
+        std::vector<double> minAndMax = getMinAndMaxOfCell<double>(point, vals, xCells, yCells);
+        double currentMinValue = minAndMax[0];
+        double currentMaxValue = minAndMax[1];
+        if (currentMinValue < minValue)
         {
-            minValue = value;
+            minValue = currentMinValue;
         }
-        if (value > maxValue)
+        if (currentMaxValue > maxValue)
         {
-            maxValue = value;
+            maxValue = currentMaxValue;
         }
     }
 

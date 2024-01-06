@@ -170,7 +170,7 @@ private:
     osg::ref_ptr< WGEShader > m_shader;
 
     // The Octree to use for accelerated marching cubes
-    Octree octree;
+    std::optional<Octree> octree;
 };
 
 #endif  // WMISOSURFACE_H

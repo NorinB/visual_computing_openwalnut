@@ -14,8 +14,9 @@ class Octree
 public:
   Octree();
   std::vector<WAcceleratedPointXYZId> getPointsIncludingIsoValue(double isoValue);
-
-private:
+  std::vector<double> calculateMinAndMax();
+  void print();
+  unsigned int countPoints();
   double min;
   double max;
   std::vector<Octree> children;

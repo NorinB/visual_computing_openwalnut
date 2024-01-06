@@ -103,22 +103,10 @@ std::vector<std::vector<unsigned int>> WAcceleratedMarchingCubesAlgorithm::getDi
         result.push_back({});
         return result;
     }
-    // else if (coordinatesSpan[1] - coordinatesSpan[0] == 2)
-    // {
-    //     firstHalf = {coordinatesSpan.front(), coordinatesSpan.front() + 1};
-    //     secondHalf = {coordinatesSpan.front() + 1, coordinatesSpan.back()};
-    // }
-    // else if (coordinatesSpan[1] - coordinatesSpan[0] == 3)
-    // {
-    //     firstHalf = {coordinatesSpan.front(), coordinatesSpan.front() + 1};
-    //     secondHalf = {coordinatesSpan.front() + 1, coordinatesSpan.back()};
-    // }
-    else
-    {
-        unsigned int mid = coordinatesSpan.front() + ((coordinatesSpan.back() - coordinatesSpan.front()) / 2);
-        firstHalf = {coordinatesSpan.front(), mid};
-        secondHalf = {mid, coordinatesSpan.back()};
-    }
+    
+    unsigned int mid = coordinatesSpan.front() + ((coordinatesSpan.back() - coordinatesSpan.front()) / 2);
+    firstHalf = {coordinatesSpan.front(), mid};
+    secondHalf = {mid, coordinatesSpan.back()};
     result.push_back(firstHalf);
     result.push_back(secondHalf);
     return result;
@@ -144,4 +132,27 @@ bool WAcceleratedMarchingCubesAlgorithm::isOnlyOneBlock(std::vector<unsigned int
         return true;
     }
     return false;
+}
+
+std::vector<WAcceleratedPointXYZId> WAcceleratedMarchingCubesAlgorithm::getPoints(unsigned int xCells, unsigned int yCells, unsigned int zCells)
+{
+    std::vector<WAcceleratedPointXYZId> points;
+    unsigned int index = 0;
+    for (unsigned int z = 0; z < zCells; z++)
+    {
+        for (unsigned int y = 0; y < yCells; y++)
+        {
+            for (unsigned int x = 0; x < xCells; x++)
+            {
+                WAcceleratedPointXYZId point;
+                point.newID = index;
+                point.x = x;
+                point.y = y;
+                point.z = z;
+                points.push_back(point);
+            }
+        }
+        index++;
+    }
+    return points;
 }

@@ -108,7 +108,8 @@
     "buffered_value": "cpp",
     "fast_back_stack": "cpp",
     "serializer": "cpp",
-    "uiobjectparent": "cpp"
+    "uiobjectparent": "cpp",
+    "delaunaytriangulator": "cpp"
   },
   "cmake.sourceDirectory": "/home/noah/Developer/visual_computing_openwalnut/src"
 }

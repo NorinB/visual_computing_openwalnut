@@ -173,7 +173,7 @@ void WMIsosurface::moduleMain()
                 m_isoValueProp->set(0.5 * (m_dataSet->getMax() + m_dataSet->getMin()), true);
             }
 
-            // octree.reset();
+            octree.reset();
         }
 
         // if nothing has changed, continue waiting

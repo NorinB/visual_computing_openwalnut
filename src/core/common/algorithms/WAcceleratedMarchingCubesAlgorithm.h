@@ -29,6 +29,7 @@
 #include <memory>
 #include <vector>
 #include <numeric>
+#include <chrono>
 
 #include "../WProgressCombiner.h"
 #include "../math/WMatrix.h"
@@ -304,6 +305,8 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
 
     points = octree.getPointsIncludingIsoValue(isoValue);
 
+    std::cout << "Number of points for accelerated marching cubes: " << points.size() << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
     // Generate isosurface.
     for (const auto &point : points)
     {
@@ -474,6 +477,9 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
     }
 
     progress->finish();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Time to generate with accelerated marching cubes: " << duration.count() << "ms" << std::endl;
     return triMesh;
 }
 

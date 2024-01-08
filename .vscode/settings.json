@@ -109,7 +109,20 @@
     "fast_back_stack": "cpp",
     "serializer": "cpp",
     "uiobjectparent": "cpp",
-    "delaunaytriangulator": "cpp"
+    "delaunaytriangulator": "cpp",
+    "graphicscontext": "cpp",
+    "scissor": "cpp",
+    "vec2b": "cpp",
+    "vec2d": "cpp",
+    "vec2f": "cpp",
+    "vec2i": "cpp",
+    "vec2s": "cpp",
+    "vec2ub": "cpp",
+    "vec2ui": "cpp",
+    "vec2us": "cpp",
+    "viewport": "cpp",
+    "guieventadapter": "cpp",
+    "eventinterface": "cpp"
   },
   "cmake.sourceDirectory": "/home/noah/Developer/visual_computing_openwalnut/src"
 }

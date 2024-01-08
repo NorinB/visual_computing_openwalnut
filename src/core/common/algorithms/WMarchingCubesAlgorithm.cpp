@@ -85,3 +85,26 @@ unsigned int WMarchingCubesAlgorithm::getVertexID( unsigned int nX, unsigned int
     return nZ * ( m_nCellsY + 1 ) * ( m_nCellsX + 1 ) + nY * ( m_nCellsX + 1 ) + nX;
 }
 
+std::vector<WPointXYZId> WMarchingCubesAlgorithm::getPoints(unsigned int xCells, unsigned int yCells, unsigned int zCells)
+{
+    std::vector<WPointXYZId> points;
+    unsigned int index = 0;
+    for (unsigned int z = 0; z < zCells; z++)
+    {
+        for (unsigned int y = 0; y < yCells; y++)
+        {
+            for (unsigned int x = 0; x < xCells; x++)
+            {
+                WPointXYZId point;
+                point.newID = index;
+                point.x = x;
+                point.y = y;
+                point.z = z;
+                points.push_back(point);
+            }
+        }
+        index++;
+    }
+    return points;
+}
+

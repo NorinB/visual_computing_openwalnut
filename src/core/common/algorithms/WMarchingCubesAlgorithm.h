@@ -205,6 +205,7 @@ std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::generateSurface(size_t n
                                                                         double isoValue,
                                                                         std::shared_ptr<WProgressCombiner> mainProgress)
 {
+    auto start = std::chrono::high_resolution_clock::now();
     WAssert(vals, "No value set provided.");
 
     m_idToVertices.clear();
@@ -228,7 +229,6 @@ std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::generateSurface(size_t n
     std::vector<WPointXYZId> points = getPoints(m_nCellsX, m_nCellsY, m_nCellsZ);
 
     std::cout << "Number of points for base marching cubes: " << points.size() << std::endl;
-    auto start = std::chrono::high_resolution_clock::now();
     // Generate isosurface.
     for (const auto &point : points)
     {

@@ -280,6 +280,7 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
                                                                                              double isoValue,
                                                                                              std::shared_ptr<WProgressCombiner> mainProgress, Octree &octree)
 {
+    auto start = std::chrono::high_resolution_clock::now();
     WAssert(vals, "No value set provided.");
 
     m_idToVertices.clear();
@@ -301,12 +302,11 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
     std::shared_ptr<WProgress> progress(new WProgress("Accelerated Marching Cubes", m_nCellsZ));
     mainProgress->addSubProgress(progress);
 
-    std::vector<WAcceleratedPointXYZId> points = getPoints(m_nCellsX, m_nCellsY, m_nCellsZ);
+    std::vector<WAcceleratedPointXYZId> points;
 
     points = octree.getPointsIncludingIsoValue(isoValue);
 
     std::cout << "Number of points for accelerated marching cubes: " << points.size() << std::endl;
-    auto start = std::chrono::high_resolution_clock::now();
     // Generate isosurface.
     for (const auto &point : points)
     {

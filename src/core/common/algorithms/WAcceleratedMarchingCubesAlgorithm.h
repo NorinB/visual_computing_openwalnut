@@ -300,7 +300,7 @@ std::shared_ptr<WTriangleMesh> WAcceleratedMarchingCubesAlgorithm::generateSurfa
     std::shared_ptr<WProgress> progress(new WProgress("Accelerated Marching Cubes", m_nCellsZ));
     mainProgress->addSubProgress(progress);
 
-    std::vector<WAcceleratedPointXYZId> points = getPoints(m_nCellsX, m_nCellsY, m_nCellsZ);
+    std::vector<WAcceleratedPointXYZId> points;
 
     points = octree.getPointsIncludingIsoValue(isoValue);
 

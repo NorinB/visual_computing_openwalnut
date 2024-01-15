@@ -28,6 +28,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <chrono>
 
 #include "../WProgressCombiner.h"
 #include "../math/WMatrix.h"
@@ -193,6 +194,7 @@ template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::gen
                                                                                                  double isoValue,
                                                                                                  std::shared_ptr< WProgressCombiner > mainProgress )
 {
+    auto start = std::chrono::high_resolution_clock::now();
     WAssert( vals, "No value set provided." );
 
     m_idToVertices.clear();
@@ -211,6 +213,8 @@ template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::gen
 
 
     unsigned int nPointsInSlice = nX * nY;
+
+    std::cout << "Number of points for base marching cubes: " << (m_nCellsX * m_nCellsY * m_nCellsZ) << std::endl;
 
     std::shared_ptr< WProgress > progress( new WProgress( "Marching Cubes", m_nCellsZ ) );
     mainProgress->addSubProgress( progress );
@@ -390,6 +394,9 @@ template<typename T> std::shared_ptr<WTriangleMesh> WMarchingCubesAlgorithm::gen
     }
 
     progress->finish();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Time to generate with base marching cubes: " << duration.count() << "ms" << std::endl;
     return triMesh;
 }
 
